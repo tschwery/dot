@@ -8,7 +8,12 @@ mpd/state
 mpd/sticker.sql
 mpd/tag_cache
 
+# Ignore personal data
 mcabber/account.mc
+
+calcurse/apts
+calcurse/todo
 
 # Ignore log that can appear
 *.log
+*.pid
