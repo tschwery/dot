@@ -1,0 +1,125 @@
+# maintain spacing between certain elements
+use_spacer left
+
+# set to yes if you want conky to be forked in the background
+background yes
+
+use_xft yes
+
+# Xft font when Xft is enabled
+xftfont DejaVuSansMono
+
+# Text alpha when using Xft
+xftalpha 1
+
+# Update interval in seconds
+update_interval 2.0
+
+# Create own window instead of using desktop (required in nautilus)
+own_window yes
+own_window_type desktop
+own_window_transparent yes
+#on_bottom yes
+
+# Use double buffering (reduces flicker, may not work for everyone)
+double_buffer yes
+
+# Minimum size of text area
+minimum_size 250 100
+maximum_width 250
+
+# Draw shades?
+draw_shades no
+
+# Draw outlines?
+draw_outline no
+
+# Draw borders around text
+draw_borders no
+
+# Stippled borders?
+stippled_borders 0
+
+# border margins
+#border_margin 1
+
+# border width
+border_width 2
+
+# Default colors and also border colors, grey90 == #e5e5e5
+default_color grey10
+default_shade_color grey60
+default_outline_color DarkGrey
+
+# Used for the titles
+#color1 0000aa
+color1 aabbaa
+# Used for the entries
+#color2 000055
+color2 bbeebb
+# Use for the present day
+#color3 7777ee
+color3 ff4444
+# User for the separators
+#color4 000033
+color4 334433
+
+# Text alignment, other possible values are commented
+#alignment top_left
+#alignment top_right
+#alignment bottom_left
+alignment bottom_right
+#alignment bottom_middle
+
+# Gap between borders of screen and text
+gap_x 10
+gap_y 10
+
+# Subtract file system buffers from used memory?
+no_buffers yes
+
+# set to yes if you want all text to be in uppercase
+uppercase no
+
+# Cache for pictures, 0=redraws on change
+imlib_cache_size 0
+
+# stuff after 'TEXT' will be formatted on screen
+
+TEXT
+${if_mpd_playing}${execpi 30 rm /tmp/FRONT_COVER*; eyeD3 -i /tmp "Music/`mpc -f "%file%" | sed 1q`" > /dev/null}${image /tmp/FRONT_COVER.jpeg -s 150x150 -p 75,0}${endif}
+
+
+
+
+
+
+
+
+
+
+
+${color4}${font DejaVuSansMono:size=9}
+${color2}($mpd_status) $mpd_elapsed / $mpd_length
+${mpd_smart 250}
+${color4}$hr
+${color1}${font FreeMono:bold:size=11}${execpi 60 gcal -K -s 1 | sed -e 1d -e '2s/^\s*//' -e 's/^/${alignc}/' | perl -npe 's/<(.*?)>/\ \${color3}$1\${color1}\ /' }
+${alignc}${color1}${execpi 60 gcal -s 1 -K -m `date +"(%m+1)%12" | bc` | sed -e 1d -e '2s/^\s*//' -e 's/^/${alignc}/'}
+${color4}${font DejaVuSansMono:size=9}$hr
+${color1}Last backup: ${color2}${execpi 60 cat .last_backup}
+${color1}Battery: ${battery BAT1}${color2} ${battery_time BAT1}
+${color4}$hr
+${color1}/:${color2}${fs_free /}
+${fs_bar /}
+${color1}/home:${color2}${fs_free /home/valdor}
+${fs_bar /home}
+${color4}$hr
+${color1}CPU:${color2} $cpu% ${freq} MHz ${hwmon temp 1}C
+${color1}${cpugraph cpu0}
+${color1}Running Process: ${color2}${running_processes}/${processes}
+${color1}RAM: ${color2}$mem (${memperc}%)
+$memgraph
+${color4}$hr
+${color1}ETH0:${color2} ${addrs eth0} ${alignr}${upspeed eth0} / ${downspeed eth0}
+${color1}WLAN0:${color2} ${addrs wlan0} ${alignr}${upspeed wlan0} / ${downspeed wlan0}
+${wireless_link_qual_perc wlan0}% ${wireless_essid wlan0}

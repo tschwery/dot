@@ -1,0 +1,14 @@
+syntax: glob
+
+# Ignore some parts that are not configuration
+awesome/vicious
+awesome/default
+
+mpd/state
+mpd/sticker.sql
+mpd/tag_cache
+
+mcabber/account.mc
+
+# Ignore log that can appear
+*.log
