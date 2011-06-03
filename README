@@ -1,0 +1,39 @@
+This repository contains configuration files I'm using on my computer.
+
+You will find here :
+
+awesome
+    The Awesome WM
+
+bashrc
+    Bash config
+
+calcurse
+   A calendar
+
+conkyrc
+   A system monitor
+
+mcabber
+    A simple Jabber client
+
+mpd
+    A Music Player Daemon
+
+nano
+    A simple text editor
+
+rtorrent
+    A BitTorrent client
+
+screenrc
+    A terminal multiplexor
+
+vimrc
+    A complex text editor
+
+xinitrc
+   My X startup script
+
+install_config
+   A script to symlink in place all these config files
