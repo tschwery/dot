@@ -1,6 +1,5 @@
 # Feh themes configuration file.
 # Lines starting with # are comments. Midline comments are not supported.
-# Place this as either ~/.config/feh/themes or /etc/feh/themes
 
 # Options are defined in theme_name/options pairs.
 # Separate themename and options by whitespace.
@@ -19,6 +18,8 @@
 # ====================
 # A few default themes
 # ====================
+
+default --scale-down --draw-filename
 
 # Webcam mode, simply specify the url(s).
 # e.g. feh -Twebcam http://cam1 http://cam2
