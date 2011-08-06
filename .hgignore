@@ -10,6 +10,7 @@ mpd/tag_cache
 
 # Ignore personal data
 mcabber/account.mc
+mcabber/histo
 
 calcurse/apts
 calcurse/todo
