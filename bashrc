@@ -70,27 +70,14 @@ esac
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-#if [ -f ~/.bash_aliases ]; then
-#    . ~/.bash_aliases
-#fi
-
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    eval "`dircolors -b`"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    #alias grep='grep --color=auto'
-    #alias fgrep='fgrep --color=auto'
-    #alias egrep='egrep --color=auto'
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
 fi
 
-# some more ls aliases
-#alias ll='ls -l'
-#alias la='ls -A'
-#alias l='ls -CF'
-alias llh='ls -lh'
+# enable color support
+if [ -x /usr/bin/dircolors ]; then
+    eval "`dircolors -b`"
+fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -113,4 +100,12 @@ function up {
     return 0
 }
 
-alias o=xdg-open
+function zorglub {
+    pushd .;
+    cd /home/valdor/workspace/SNV3SRV/SNV3-cclient/Tools;
+    for i in $@; do
+        DOMAIN=$(echo $i | tr '[a-z]' '[A-Z]')
+        ./create-config-zip --populate --host localhost:8181 --only-files ../Ressources/System\ texts/Tasks\ and\ DataFields/Ta*${DOMAIN}* ../Config/*${DOMAIN}*.xml ../Config/*/*${DOMAIN}*.xml;
+    done;
+    popd;
+}
