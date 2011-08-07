@@ -4,7 +4,7 @@
 nitrogen --restore
 
 # Add a path
-PATH=$PATH:/home/valdor/.local/bin/:/home/valdor/EPFL/bin/
+PATH="$HOME/.local/bin/:$HOME/EPFL/bin/:$PATH"
 xdg-user-dirs-update
 
 # Setting the screen dpi
