@@ -112,7 +112,7 @@ ${color4}$hr
 ${color1}/:${color2}${fs_free /}
 ${fs_bar /}
 ${color1}/home:${color2}${fs_free /home/valdor}
-${fs_bar /home}
+${fs_bar /home/valdor}
 ${color4}$hr
 ${color1}CPU:${color2} $cpu% ${freq} MHz ${hwmon temp 1}C
 ${color1}${cpugraph cpu0}
