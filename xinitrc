@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Setting the bg
-nitrogen --restore
+feh --bg-fill /home/valdor/Pictures/Wallpapers/1270927674051.jpg
 
 # Add a path
 PATH="$HOME/.local/bin/:$HOME/EPFL/bin/:$PATH"
