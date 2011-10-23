@@ -1,0 +1,22 @@
+## This configuration file is used for every program using readline
+## for the input.
+
+# Be 8 bit clean.
+set input-meta on
+set output-meta on
+
+# Ctrl-Arrows to move between words
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+"\e[5C": forward-word
+"\e[5D": backward-word
+
+# Autocompletion ignores the case
+set completion-ignore-case on
+
+# Autocompletion will show only what still need to be typed
+set completion-prefix-display-length 2
+
+# Ctrl-j/k to cycle through the available completions
+Control-j: menu-complete
+Control-k: menu-complete-backward
