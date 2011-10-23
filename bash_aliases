@@ -14,3 +14,6 @@ alias ll="ls --color=auto -lahF --file-type"
 alias grep='grep --color=auto'
 
 alias sapt='apt-cache search'
+alias fapt='apt-file search'
+
+alias nip='curl icanhazip.com'
