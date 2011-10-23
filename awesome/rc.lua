@@ -100,7 +100,8 @@ end
 -- Lock mechanism
 function screen_lock ( )
     local auth = "-auth pam"
-    local back = "-bg image:center,file=/home/valdor/Pictures/Wallpapers/4chan/1271267563.jpg"
+--    local back = "-bg image:scale,file=/home/valdor/Pictures/Wallpapers/41f151a72f549c1a2eb60ae7f4f35f42.png"
+    local back = "-bg image:scale,file=/home/valdor/Pictures/Wallpapers/wallpaper-1099241.jpg"
     local curs = ""
     io.popen("alock" .. " " .. auth .. " " .. back .. " " .. curs)
 end
