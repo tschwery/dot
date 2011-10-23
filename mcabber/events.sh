@@ -20,19 +20,19 @@ if [ $ACTION_TYPE = "MSG" ]; then
     case "$MSG_DIRECTION" in
         IN|MUC)
             if [ -n "$4" -a -f "$4" ]; then
-                send_notification "New message from $3" "$(cat $4)"
+                send_notification "New message from $3" "`cat $4 | fold -s -w 50`"
                 rm $4
             else
                 send_notification "New message from $3" ""
             fi ;;
-        OUT) echo > /dev/null;;
+        OUT) ;;
     esac
 elif [ $ACTION_TYPE = "STATUS" ]; then
     case "$2" in
-         _|I)    send_notification "$3" "$3 has signed off.";;
+         #_|I)    send_notification "$3" "$3 has signed off.";;
          O|F)    send_notification "$3" "$3 is now online." ;;
-         A|N)    send_notification "$3" "$3 has gone away." ;;
-         D)      send_notification "$3" "$3 does not want to be disturbed.";;
+         #A|N)    send_notification "$3" "$3 has gone away." ;;
+         #D)      send_notification "$3" "$3 does not want to be disturbed.";;
          X)      send_notification "$3" "$3 sent a request." ;;
     esac
 elif [ $1 = "UNREAD" ]; then
