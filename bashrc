@@ -66,12 +66,13 @@ xterm*|rxvt*)
 esac
 
 # Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
+fi
+
+# Function definitions.
+if [ -f ~/.bash_functions ]; then
+    . ~/.bash_functions
 fi
 
 # enable color support
@@ -87,25 +88,3 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 export MANPAGER="/usr/bin/most -s"
-
-function up {
-    path=""
-    up="../"
-    for (( i=1; i<=$1; i++))
-    do
-        path=$path$up
-    done
-    cd $path
-    pwd
-    return 0
-}
-
-function zorglub {
-    pushd .;
-    cd /home/valdor/workspace/SNV3SRV/SNV3-cclient/Tools;
-    for i in $@; do
-        DOMAIN=$(echo $i | tr '[a-z]' '[A-Z]')
-        ./create-config-zip --populate --host localhost:8181 --only-files ../Ressources/System\ texts/Tasks\ and\ DataFields/Ta*${DOMAIN}* ../Config/*${DOMAIN}*.xml ../Config/*/*${DOMAIN}*.xml;
-    done;
-    popd;
-}
