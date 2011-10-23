@@ -103,8 +103,8 @@ ${color4}${font DejaVuSansMono:size=9}
 ${color2}($mpd_status) $mpd_elapsed / $mpd_length
 ${mpd_smart 250}
 ${color4}$hr
-${color1}${font FreeMono:bold:size=11}${execpi 60 gcal -K -s 1 | sed -e 1d -e '2s/^\s*//' -e 's/^/${alignc}/' | perl -npe 's/<(.*?)>/\ \${color3}$1\${color1}\ /' }
-${alignc}${color1}${execpi 60 gcal -s 1 -K -m `date +"(%m+1)%12" | bc` | sed -e 1d -e '2s/^\s*//' -e 's/^/${alignc}/'}
+${color1}${font FreeMono:bold:size=11}${execpi 60 gcal -K -s 1 | sed -e 1d -e '2s/^\s*/${alignc}/' -e 's/^\s//' | perl -npe 's/<(.*?)>/\ \${color3}$1\${color1}\ /' }
+${alignc}${color1}${execpi 60 gcal -s 1 -K -m `date +"(%m+1)%12" | bc` | sed -e 1d -e '2s/^\s*/${alignc}/' -e 's/^\s//' }
 ${color4}${font DejaVuSansMono:size=9}$hr
 ${color1}Last backup: ${color2}${execpi 60 cat .last_backup}
 ${color1}Battery: ${battery BAT1}${color2} ${battery_time BAT1}
@@ -114,7 +114,7 @@ ${fs_bar /}
 ${color1}/home:${color2}${fs_free /home/valdor}
 ${fs_bar /home/valdor}
 ${color4}$hr
-${color1}CPU:${color2} $cpu% ${freq} MHz ${hwmon temp 1}C
+${color1}CPU:${color2} $cpu% ${freq} MHz ${execi 30 sensors | grep 'Core' | head -n1 | awk '{print $3}'}
 ${color1}${cpugraph cpu0}
 ${color1}Running Process: ${color2}${running_processes}/${processes}
 ${color1}RAM: ${color2}$mem (${memperc}%)
