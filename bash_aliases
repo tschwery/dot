@@ -17,3 +17,7 @@ alias sapt='apt-cache search'
 alias fapt='apt-file search'
 
 alias nip='curl icanhazip.com'
+
+alias cdiff='diff -wBy -W $COLUMNS'
+
+alias issh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null"'
