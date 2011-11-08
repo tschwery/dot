@@ -20,6 +20,32 @@ function images_bigger {
     done 2> /dev/null | grep -v "too small"
 }
 
+function gen_password {
+    length=$1
+    if [ -z "$length" ]; then length=10; fi
+    head -c24 /dev/urandom | base64 | head -c $length | sed 's/$/\n/'
+}
+
+function reverse_md5 {
+    hash=$1
+    if [ -z "$hash" ]; then echo "Please give a hash ..."; return 1; fi
+    curl "http://md5.noisette.ch/md5.php?hash=$hash"
+}
+
+function file_send {
+    if [ $# -ne 3 ]; then echo "file_send dest_ip dest_port file" >&2; return 0; fi
+    dest_ip=$1
+    dest_port=$2
+    file=$3
+    pv $file | nc $dest_ip $dest_port
+}
+
+function file_receive {
+    if [ $# -ne 2 ]; then echo "usage: file_receive listen_port file" >&2; return 0; fi
+    port=$1
+    file=$2
+    nc -l -p $port | pv > $file
+}
 
 #------------  Work utilities -------------
 function zorglub {
@@ -31,3 +57,4 @@ function zorglub {
     done;
     popd;
 }
+
