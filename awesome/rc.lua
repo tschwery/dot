@@ -100,8 +100,17 @@ end
 -- Lock mechanism
 function screen_lock ( )
     local auth = "-auth pam"
---    local back = "-bg image:scale,file=/home/valdor/Pictures/Wallpapers/41f151a72f549c1a2eb60ae7f4f35f42.png"
-    local back = "-bg image:scale,file=/home/valdor/Pictures/Wallpapers/wallpaper-1099241.jpg"
+    local walls = {
+        "/home/valdor/Pictures/Wallpapers/wallpaper-1099237.jpg",
+        "/home/valdor/Pictures/Wallpapers/wallpaper-1099238.jpg",
+        "/home/valdor/Pictures/Wallpapers/wallpaper-1099239.jpg",
+        "/home/valdor/Pictures/Wallpapers/wallpaper-1099240.jpg",
+        "/home/valdor/Pictures/Wallpapers/wallpaper-1099241.jpg",
+        "/home/valdor/Pictures/Wallpapers/wallpaper-1099242.jpg"
+    }
+    
+    local wall_number = math.random(1,6)
+    local back = "-bg image:scale,file="..walls[wall_number]
     local curs = ""
     io.popen("alock" .. " " .. auth .. " " .. back .. " " .. curs)
 end
@@ -111,10 +120,13 @@ function power_function (action)
     naughty.notify({ title = "Menu", text = action, timeout = 2 })
     if (action == "Suspend") then
         screen_lock()
-        action = action .. " int32:0"
+        io.popen('sudo pm-suspend')
+    elseif (action == "Hibernate") then
+        screen_lock()
+        io.popen('sudo s2disk')
     end
-
-    io.popen('dbus-send --system --print-reply --dest="org.freedesktop.Hal" /org/freedesktop/Hal/devices/computer org.freedesktop.Hal.Device.SystemPowerManagement.' .. action)
+    
+    -- io.popen('dbus-send --system --print-reply --dest="org.freedesktop.Hal" /org/freedesktop/Hal/devices/computer org.freedesktop.Hal.Device.SystemPowerManagement.' .. action)
 end
 
 -- Information about active client
@@ -191,8 +203,7 @@ myawesomemenu = {
 
 mypowermenu = {
     { "Suspend",  power_function },
-    { "Reboot",  power_function },
-    { "Shutdown",  power_function },
+    { "Hibernate",  power_function },
 }
 
 
