@@ -47,6 +47,17 @@ function file_receive {
     nc -l -p $port | pv > $file
 }
 
+function folder_send {
+    if [ $# -lt 2 ]; then echo "usage: folder_send dest_ip dest_port files" >&2; return 0; fi
+    dest_ip=$1
+    dest_port=$2
+    shift
+    shift
+    size=$(du -s $@ | awk '{total += $1;}END{print total;}')
+    echo $@ are $size
+    tar cv $@ | pv -s ${size}k | nc $dest_ip $dest_port
+}
+
 #------------  Work utilities -------------
 function zorglub {
     pushd .;
