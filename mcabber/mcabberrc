@@ -25,7 +25,7 @@ set cmdhistory_lines = 25
 # Roster filter
 # ([o]nline, [f]ree_for_chat, [d]o_not_disturb, [n]ot_available,
 # [a]way, [_]offline).
-set roster_display_filter = ofdna_
+set roster_display_filter = ofdna
 set ignore_self_presence = 1
 
 # Typing notifications, Chat States, Events (XEP-22/85)
