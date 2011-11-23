@@ -21,3 +21,5 @@ alias nip='curl icanhazip.com'
 alias cdiff='diff -wBy -W $COLUMNS'
 
 alias issh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null"'
+
+alias valgrind_memory='valgrind --leak-check=full --show-reachable=yes'
