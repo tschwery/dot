@@ -64,6 +64,8 @@ color3 ff22ff
 #color4 000033
 color4 334433
 
+color0 9090aa
+
 # Text alignment, other possible values are commented
 #alignment top_left
 #alignment top_right
@@ -95,17 +97,12 @@ ${color4}${font DejaVuSansMono:size=9}
 ${color1}${execpi 120 gcal -K -s 1 .+ | grep -v '^$' | perl -npe 's/^/ \$\{alignr\}/; s/<(.*?)>/\ \${color3}$1\${color1}\ /' }
 ${color4}$hr
 ${mpd_smart 250} ${alignr} ${color2}($mpd_status) $mpd_elapsed / $mpd_length
-${color4}$hr
 ${color1}Battery: ${battery BAT1}${color2} ${battery_time BAT1} ${alignr}${color1}Last backup: ${color2}${execpi 60 cat .last_backup}
 ${color4}$hr
 ${color1}/    :${color2}${fs_free /} ${fs_bar 5,175 /} ${alignr}${fs_bar 5,175 /home/valdor} ${color1}/home:${color2}${fs_free /home/valdor}
 ${color4}$hr
 ${color1}CPU:${color2} $cpu% ${freq} MHz ${execi 30 sensors | grep 'Core' | head -n1 | awk '{print $3}'} ${alignr}RAM: ${color2}$mem (${memperc}%)
 ${color1}${cpugraph cpu0 20,250} ${memgraph 20,250}
-${color4}$hr
-${color1}
-NAME                PID       CPU%      MEM%
-${top name 1} ${top pid 1}   ${top cpu 1}    ${top mem 1}           ${color1}ETH0:${color2} ${addrs eth0} ${alignr}${upspeed eth0} / ${downspeed eth0}
-${top name 2} ${top pid 2}   ${top cpu 2}    ${top mem 2}           ${color1}WLAN0:${color2} ${addrs wlan0} ${alignr}${upspeed wlan0} / ${downspeed wlan0}
-${top name 3} ${top pid 3}   ${top cpu 3}    ${top mem 3}           ${wireless_link_qual_perc wlan0}% ${wireless_essid wlan0}
-${top name 4} ${top pid 4}   ${top cpu 4}    ${top mem 4}
+${color4}$hr${color0}
+${color4}ETH0:${color2} ${addrs eth0} ${goto 120} ${upspeed eth0} / ${downspeed eth0}
+${color4}WLAN0:${color2} ${addrs wlan0} ${goto 120} ${upspeed wlan0} / ${downspeed wlan0} ${goto 200} ${wireless_link_qual_perc wlan0}% ${wireless_essid wlan0}
