@@ -1,0 +1,23 @@
+URxvt*transparent:       true
+URxvt*shading:           35 # 0 to 99 darkens, 101 to 200 lightens
+URxvt*cursorColor:       white
+URxvt*cursorBlink:       true
+URxvt*saveLines:         2000
+URxvt*internalBorder:    3
+URxvt*scrollBar:         false
+URxvt*visualBell:        true
+URxvt*secondaryScroll:   false
+URxvt*secondaryScreen:   true
+URxvt*eightBitInput:     true
+URxvt*eightBitOutput:    true
+URxvt*inheritPixmap:     true
+URxvt*perl-lib:          /usr/lib/urxvt
+URxvt*perl-ext-common:   default,matcher
+URxvt*urlLauncher:       firefox
+URxvt*matcher.button:    2
+URxvt*matcher.pattern.1: \\b[\\w.-]+\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
+URxvt*foreground:        rgb:ee/ee/ee
+URxvt*background:        rgb:00/00/00
+URxvt.font:              xft:monospace:size=10
+URxvt.iso14755:          false
+URxvt.iso14755_52:       false
