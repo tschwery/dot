@@ -87,4 +87,8 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
+if [ -f ~/.bash_completion ]; then
+    . ~/.bash_completion
+fi
+
 export MANPAGER="/usr/bin/most -s"
