@@ -1,0 +1,4 @@
+(define devices '(alsa native sdl null))
+(define alsa-device "default")
+(define speaker-num 2)
+(define sampling-rate 44100)
