@@ -26,7 +26,7 @@ text_buffer_size 1024
 
 # Minimum size of text area
 minimum_size 500 100
-maximum_width 350
+maximum_width 400
 
 # Draw shades?
 draw_shades no
@@ -51,9 +51,9 @@ default_color grey10
 default_shade_color grey60
 default_outline_color DarkGrey
 
-color1 223333
+color1 FFFFFF
 color2 332233
-color3 334433
+color3 FF60FF
 
 # Text alignment, other possible values are commented
 alignment bottom_left
@@ -71,11 +71,8 @@ imlib_cache_size 0
 # stuff after 'TEXT' will be formatted on screen
 
 TEXT
-${color2}${font DejaVuSansMono:size=9}
-${execpi 15 rss.pl http://blogs.epfl.ch/public/export?blog=1234 10}
-${color2}${hr}
-NAME                PID       CPU%      MEM%
-${top name 1} ${top pid 1}   ${top cpu 1}    ${top mem 1}
-${top name 2} ${top pid 2}   ${top cpu 2}    ${top mem 2}
-${top name 3} ${top pid 3}   ${top cpu 3}    ${top mem 3}
-${top name 4} ${top pid 4}   ${top cpu 4}    ${top mem 4}
+${font DejaVuSansMono:size=9}
+${color1}${execpi 120 gcal -K -s 1 .+ | grep -v '^$' | perl -pe 's/<(.*?)>/\ \${color3}$1\${color1}\ /;' }
+${hr}
+${execi 60 rss.pl http://blogs.epfl.ch/public/export?blog=1234 10 .1234}
+${execpi 5 cat .1234}

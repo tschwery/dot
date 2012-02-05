@@ -52,19 +52,10 @@ default_shade_color grey60
 default_outline_color DarkGrey
 
 # Used for the titles
-color1 223333
+color1 F0F0F0
 #color1 aabbaa
 # Used for the entries
-color2 332233
-#color2 bbeebb
-# Use for the present day
-color3 ff22ff
-#color3 ff4444
-# User for the separators
-#color4 000033
-color4 334433
-
-color0 9090aa
+color2 B0B0B0
 
 # Text alignment, other possible values are commented
 #alignment top_left
@@ -88,21 +79,15 @@ imlib_cache_size 0
 
 # stuff after 'TEXT' will be formatted on screen
 
-#${execpi 60 gcal -K -s 1 | sed -e 1d -e '2s/^\s*//' -e 's/^\s//' | perl -npe 's/<(.*?)>/\ \${color3}$1\${color1}\ /' }
-
 #${if_mpd_playing}${execpi 30 rm /tmp/FRONT_COVER*; eyeD3 -i /tmp "Music/`mpc -f "%file%" | sed 1q`" > /dev/null}${image /tmp/FRONT_COVER.jpeg -s 150x150 -p 75,0}${endif}
+#${mpd_smart 250} ${alignr} ${color2}($mpd_status) $mpd_elapsed / $mpd_length
 
 TEXT
-${color4}${font DejaVuSansMono:size=9}
-${color1}${execpi 120 gcal -K -s 1 .+ | grep -v '^$' | perl -npe 's/^/ \$\{alignr\}/; s/<(.*?)>/\ \${color3}$1\${color1}\ /' }
-${color4}$hr
-${mpd_smart 250} ${alignr} ${color2}($mpd_status) $mpd_elapsed / $mpd_length
-${color1}Battery: ${battery BAT1}${color2} ${battery_time BAT1} ${alignr}${color1}Last backup: ${color2}${execpi 60 cat .last_backup}
-${color4}$hr
+${font DejaVuSansMono:size=9}
+${color1}ETH0:${color2} ${addrs eth0} ${upspeed eth0} / ${downspeed eth0} ${alignr}${color1}WLAN0:${color2} ${upspeed wlan0} / ${downspeed wlan0} ${addrs wlan0}
+${color1}Last backup: ${color2}${execpi 60 cat .last_backup} ${alignr}${wireless_link_qual_perc wlan0}% ${wireless_essid wlan0}
+${color2}$hr
 ${color1}/    :${color2}${fs_free /} ${fs_bar 5,175 /} ${alignr}${fs_bar 5,175 /home/valdor} ${color1}/home:${color2}${fs_free /home/valdor}
-${color4}$hr
+${color2}$hr
 ${color1}CPU:${color2} $cpu% ${freq} MHz ${execi 30 sensors | grep 'Core' | head -n1 | awk '{print $3}'} ${alignr}RAM: ${color2}$mem (${memperc}%)
-${color1}${cpugraph cpu0 20,250} ${memgraph 20,250}
-${color4}$hr${color0}
-${color4}ETH0:${color2} ${addrs eth0} ${goto 120} ${upspeed eth0} / ${downspeed eth0}
-${color4}WLAN0:${color2} ${addrs wlan0} ${goto 120} ${upspeed wlan0} / ${downspeed wlan0} ${goto 200} ${wireless_link_qual_perc wlan0}% ${wireless_essid wlan0}
+${color2}${cpugraph cpu0 20,250} ${memgraph 20,250}

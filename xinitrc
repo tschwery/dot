@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# Getting the config for rxvt
+xrdb -merge ~/.Xresources
+
 # Setting the bg
-feh --bg-fill /home/valdor/Pictures/Wallpapers/1270927674051.jpg
+feh  --bg-fill "$HOME/Pictures/Wallpapers/rore_-_Debian_Moonlight.png"
 
 # Add a path
 PATH="$HOME/.local/bin/:$HOME/EPFL/bin/:$PATH"
@@ -18,7 +21,8 @@ xmodmap -e 'keycode 77 = ISO_Level3_Shift Num_Lock'
 
 # Launching essential apps
 clipit &
-conky &
+conky -c /home/valdor/.conkyrc &
+conky -c /home/valdor/.conkyrssrc &
 mpd /home/valdor/.mpd/mpd.conf
 xcompmgr &
 

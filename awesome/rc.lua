@@ -578,7 +578,7 @@ awful.rules.rules = {
                      size_hints_honor = false,
                      buttons = clientbuttons } },
     { rule = { class = "Conky" },
-      properties = { floating = true } },
+      properties = { floating = true, sticky = true } },
     { rule = { instance = "Navigator" },
       properties = { tag = tags[1][1] } },
     { rule = { instance = "Mail" },
