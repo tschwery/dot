@@ -88,6 +88,16 @@ function backlight (action)
     end
 end
 
+-- Display todolist in notification
+function todo_notification()
+    local fd = io.popen("todo")
+    local todos
+    if (not (fd == nil)) then
+        todos = fd:read("*all")
+    end
+    naughty.notify({ title = "TODO List", text = todos, timeout = 15 })
+end
+
 -- Search google through surfraw
 function search_google (search_term)
     io.popen("sr google " .. search_term)
@@ -378,6 +388,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
 
+    awful.key({ modkey,           }, "t",     function() todo_notification() end),
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
 
