@@ -21,3 +21,4 @@ URxvt*background:        rgb:00/00/00
 URxvt.font:              xft:monospace:size=10
 URxvt.iso14755:          false
 URxvt.iso14755_52:       false
+URxvt.cursorUnderline:   true
