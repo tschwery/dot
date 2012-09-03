@@ -22,3 +22,5 @@ URxvt.font:              xft:monospace:size=10
 URxvt.iso14755:          false
 URxvt.iso14755_52:       false
 URxvt.cursorUnderline:   true
+
+#include ".Xcolors"
