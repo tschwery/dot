@@ -1,2 +1,5 @@
 # Completing the ssh using previous hosts
 complete -W "$(echo $(grep '^ssh ' .bash_history | sort -u | sed 's/^ssh //'))" ssh
+
+# Completing the net_connect command
+complete -W "epfl_cable epfl_wifi epfl public_epfl" net_connect
