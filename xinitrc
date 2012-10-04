@@ -38,6 +38,9 @@ amixer set 'Master' 20
 # Set the watch onto connection files
 notify_connections &
 
+# Autosync
+lsyncd "$HOME/.lsyncrc"
+
 # invoke global X session script
 . /etc/X11/Xsession
 # Does not return ...
