@@ -57,3 +57,13 @@ function folder_send {
     echo $@ are $size
     tar cv $@ | pv -s ${size}k | nc $dest_ip $dest_port
 }
+
+function bfolders {
+    if [ $# -ge 1 ]; then
+        FOLDER="$1"
+    else
+        FOLDER="."
+    fi
+    du -hs $(find $FOLDER/* -prune) | sort -h
+}
+
