@@ -57,15 +57,3 @@ function folder_send {
     echo $@ are $size
     tar cv $@ | pv -s ${size}k | nc $dest_ip $dest_port
 }
-
-#------------  Work utilities -------------
-function zorglub {
-    pushd .;
-    cd /home/valdor/workspace/SNV3SRV/SNV3-cclient/Tools;
-    for i in $@; do
-        DOMAIN=$(echo $i | tr '[a-z]' '[A-Z]')
-        ./create-config-zip --populate --host localhost:8181 --only-files ../Ressources/System\ texts/Tasks\ and\ DataFields/Ta*${DOMAIN}* ../Config/*${DOMAIN}*.xml ../Config/*/*${DOMAIN}*.xml;
-    done;
-    popd;
-}
-
