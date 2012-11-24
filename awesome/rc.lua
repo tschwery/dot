@@ -82,9 +82,9 @@ end
 -- Backlight control
 function backlight (action)
     if action == "inc" then
-        io.popen("xbacklight -inc 50")
+        io.popen("xrandr --output LVDS1 --set BACKLIGHT 7")
     elseif action == "dec" then
-        io.popen("xbacklight -dec 50")
+        io.popen("xrandr --output LVDS1 --set BACKLIGHT 0")
     end
 end
 
