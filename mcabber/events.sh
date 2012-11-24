@@ -20,7 +20,8 @@ if [ $ACTION_TYPE = "MSG" ]; then
     case "$MSG_DIRECTION" in
         IN|MUC)
             if [ -n "$4" -a -f "$4" ]; then
-                send_notification "New message from $3" "`cat $4 | fold -s -w 50`"
+                MSG="$(cat $4 | perl -pe 's/\*//g')"
+                send_notification "New message from $3" "$( echo $MSG | fold -s -w 50)"
                 rm $4
             else
                 send_notification "New message from $3" ""
