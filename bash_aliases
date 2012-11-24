@@ -25,3 +25,5 @@ alias issh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null"'
 alias valgrind_memory='valgrind --leak-check=full --show-reachable=yes'
 
 alias netbeans_clean='rm ${HOME}/.netbeans/7.1.2/config/Windows2Local/Components/*'
+
+alias noblank='xset -dpms; xset s off;'
