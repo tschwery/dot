@@ -112,18 +112,16 @@ end
 
 -- Lock mechanism
 function screen_lock ( )
+    local wall_folder="/home/valdor/.alockimages/"
+
     local auth = "-auth pam"
-    local walls = {
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099237.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099238.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099239.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099240.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099241.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099242.jpg"
-    }
-    
-    local wall_number = math.random(1,6)
-    local back = "-bg image:scale,file="..walls[wall_number]
+    local walls_iterator = io.popen('ls "' .. wall_folder .. '"'):lines()
+    local walls = {}
+    for v in walls_iterator do
+        walls[#walls + 1] = v
+    end
+    local wall_number = math.random(1,#walls)
+    local back = "-bg image:scale,file='" .. wall_folder .. walls[wall_number] .. "'"
     local curs = ""
     io.popen("/home/valdor/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
 end
@@ -133,7 +131,7 @@ function power_function (action, menu)
     naughty.notify({ title = "Menu", text = action, timeout = 2 })
     if (action == "Suspend") then
         screen_lock()
-        io.popen('sudo pm-suspend')
+        io.popen('sudo s2ram')
     elseif (action == "Hibernate") then
         screen_lock()
         io.popen('sudo s2disk')
@@ -187,11 +185,7 @@ layouts =
     awful.layout.suit.tile.top,
     awful.layout.suit.fair,
     awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
     awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
-    awful.layout.suit.magnifier
 }
 -- }}}
 
