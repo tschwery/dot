@@ -100,18 +100,16 @@ end
 
 -- Lock mechanism
 function screen_lock ( )
+    local wall_folder="/home/valdor/.alockimages/"
+
     local auth = "-auth pam"
-    local walls = {
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099237.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099238.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099239.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099240.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099241.jpg",
-        "/home/valdor/Pictures/Wallpapers/wallpaper-1099242.jpg"
-    }
-    
-    local wall_number = math.random(1,6)
-    local back = "-bg image:scale,file="..walls[wall_number]
+    local walls_iterator = io.popen('ls "' .. wall_folder .. '"'):lines()
+    local walls = {}
+    for v in walls_iterator do
+        walls[#walls + 1] = v
+    end
+    local wall_number = math.random(1,#walls)
+    local back = "-bg image:scale,file='" .. wall_folder .. walls[wall_number] .. "'"
     local curs = ""
     io.popen("alock" .. " " .. auth .. " " .. back .. " " .. curs)
 end
@@ -121,7 +119,7 @@ function power_function (action)
     naughty.notify({ title = "Menu", text = action, timeout = 2 })
     if (action == "Suspend") then
         screen_lock()
-        io.popen('sudo pm-suspend')
+        io.popen('sudo s2ram')
     elseif (action == "Hibernate") then
         screen_lock()
         io.popen('sudo s2disk')
@@ -175,11 +173,7 @@ layouts =
     awful.layout.suit.tile.top,
     awful.layout.suit.fair,
     awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
     awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
-    awful.layout.suit.magnifier
 }
 -- }}}
 
@@ -235,16 +229,38 @@ separator.text = " | "
 mpdwidget = widget({ type = "textbox" })
 vicious.register(mpdwidget, vicious.widgets.mpd,
     function (widget, args)
+        local title_max = 40
         if args["{state}"] == "Stop" then 
             return "(Stopped)"
         else 
-            return args["{Artist}"]..' - '.. args["{Title}"]
+            if string.len(args["{Title}"]) < title_max then
+                return args["{Artist}"]..' - ' .. args["{Title}"]
+            else
+                if (txt_start == nil) then
+                    txt_start = 0
+                end
+
+                txt_start = txt_start + 10
+
+                if (txt_start > string.len(args["{Title}"])) then
+                    txt_start = txt_start % string.len(args["{Title}"])
+                end
+                txt_end = txt_start + title_max
+
+                local title_expanded = args["{Title}"] .. " " .. args["{Title}"]
+                return args["{Artist}"]..' - '.. string.sub(title_expanded, txt_start, txt_end)
+            end
         end
     end, 5)
 
 -- Battery widget
-batwidget = widget({ type = "textbox" })
-vicious.register(batwidget, vicious.widgets.bat, "$1 $2% ($3)", 10, "BAT1")
+batwidget0 = widget({ type = "textbox" })
+batwidget1 = widget({ type = "textbox" })
+vicious.register(batwidget0, vicious.widgets.bat, "$1 $2% ($3)", 10, "BAT0")
+vicious.register(batwidget1, vicious.widgets.bat, "$1 $2% ($3)", 10, "BAT1")
+
+tempwidget0 = widget({ type = "textbox" })
+vicious.register(tempwidget0, vicious.widgets.thermal, "$1°", 10, "thermal_zone0")
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -320,7 +336,12 @@ for s = 1, screen.count() do
         separator,
         mpdwidget,
         separator,
-        batwidget,
+        batwidget0,
+        separator,
+        batwidget1,
+        separator,
+        tempwidget0,
+        separator,
         s == 1 and mysystray or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
