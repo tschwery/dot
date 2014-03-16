@@ -22,7 +22,7 @@ own_window_transparent yes
 
 # Use double buffering (reduces flicker, may not work for everyone)
 double_buffer yes
-text_buffer_size 1024
+text_buffer_size 4096
 
 # Minimum size of text area
 minimum_size 500 100
@@ -73,6 +73,3 @@ imlib_cache_size 0
 TEXT
 ${font DejaVuSansMono:size=9}
 ${color1}${execpi 120 gcal -K -s 1 .+ | grep -v '^$' | perl -pe 's/<(.*?)>/\ \${color3}$1\${color1}\ /;' }
-${hr}
-${execi 60 rss.pl http://blogs.epfl.ch/public/export?blog=1234 10 .1234}
-${execpi 5 cat .1234}
