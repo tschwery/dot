@@ -16,9 +16,23 @@ input {
 
 audio_output {
 	type		"alsa"
-	name		"My ALSA Device"
-        options		"dev=dmixer"
+	name		"Internal Card"
+        options		"dev=ossmix"
         device		"plug:dmix"
 }
+
+audio_output {
+	type		"pulse"
+	name		"Pulse"
+}
+
+audio_output {
+        type            "fifo"
+        name            "My FIFO"
+        path            "/tmp/mpd.fifo"
+        format          "44100:16:2"
+}
+
+
 filesystem_charset		"UTF-8"
 id3v1_encoding			"UTF-8"
