@@ -24,6 +24,9 @@ alias issh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null"'
 
 alias valgrind_memory='valgrind --leak-check=full --show-reachable=yes'
 
-alias netbeans_clean='rm ${HOME}/.netbeans/7.1.2/config/Windows2Local/Components/*'
+alias netbeans_clean='rm ${HOME}/.netbeans/*/config/Windows2Local/Components/*'
 
 alias noblank='xset -dpms; xset s off;'
+
+alias net_eth1='sudo killall dhclient && sudo dhclient wlan1 -r && sudo dhclient eth1 -v'
+alias net_wlan1='sudo killall dhclient && sudo dhclient eth1 -r && sudo dhclient wlan1 -v'
