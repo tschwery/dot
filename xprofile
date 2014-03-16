@@ -23,7 +23,7 @@ xmodmap -e 'keycode 77 = ISO_Level3_Shift Num_Lock'
 clipit &
 conky -c /home/valdor/.conkyrc &
 conky -c /home/valdor/.conkyrssrc &
-mpd /home/valdor/.mpd/mpd.conf
+mpd
 
 # .. And some useful apps
 firefox &
