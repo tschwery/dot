@@ -61,8 +61,9 @@ function mediaplayer (action)
         song_name = fd:read("*line")
         status_line = fd:read("*line")
         fd:close()
-        _, _, mpd_status, duration = string.find(status_line, "%[(%a+)%].*%d*:%d*/(%d*:%d*).*")
-        mpd_text = song_name .. " (" .. duration .. ")"
+        _, _, mpd_status, playlist_pos, duration = string.find(status_line, "%[(%a+)%]%s+#(%d*.%d*)%s+%d*:%d*/(%d*:%d*).*")
+        mpd_text = song_name .. " (" .. duration .. ")" .. " [" .. playlist_pos .. "]"
+        mpd_text = string.gsub(mpd_text, "&", "&amp;")
     end
     
     mpd_status = mpd_status:gsub("%a", string.upper, 1)
