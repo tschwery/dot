@@ -12,10 +12,10 @@ URxvt*eightBitInput:     true
 URxvt*eightBitOutput:    true
 URxvt*inheritPixmap:     true
 URxvt*perl-lib:          /usr/lib/urxvt
-URxvt*perl-ext-common:   default,matcher
+URxvt*perl-ext-common:   default,matcher,url-select
 URxvt*urlLauncher:       firefox
-URxvt*matcher.button:    2
-URxvt*matcher.pattern.1: \\b[\\w.-]+\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
+URxvt*underlineURLs:     true
+URxvt*keysym.M-u:        perl:url-select:select_next
 URxvt*foreground:        rgb:ee/ee/ee
 URxvt*background:        rgb:00/00/00
 URxvt.font:              xft:monospace:size=10
