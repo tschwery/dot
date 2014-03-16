@@ -11,6 +11,8 @@ export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
 # ... or force ignoredups and ignorespace
 export HISTCONTROL=ignoreboth
 
+export HISTSIZE=5000
+
 # append to the history file, don't overwrite it
 shopt -s histappend
 
@@ -31,8 +33,8 @@ WHITE='\[\033[01;37m\]'
 NIL='\[\033[00m\]'
 
 set_prompt() {
-    ret=$?
-    if [ $ret -ne 0 ]; then ret="${RED}($ret)"; else ret=""; fi
+    reta=$?
+    if [ $reta -ne 0 ]; then ret="${RED}($reta)"; else ret=""; fi
 
     command="${BLUE}\!"
 
@@ -44,18 +46,12 @@ set_prompt() {
     end="${CYAN} $ ${NIL}"
 
     PS1="${command}${ret}${GREEN}@${host}:${path}${end}"
+
+    title="${HOSTNAME}: ${PWD} ($reta)"
+    printf "\e]2;%s\a" "$title"
 }
 
 PROMPT_COMMAND=set_prompt
-
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
 
 # Alias definitions.
 if [ -f ~/.bash_aliases ]; then
@@ -84,3 +80,7 @@ if [ -f ~/.bash_completion ]; then
 fi
 
 export MANPAGER="/usr/bin/most -s"
+
+if [ -f ~/.bash_local ]; then
+    . ~/.bash_local
+fi
