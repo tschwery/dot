@@ -10,7 +10,7 @@
 #   $4 is provided for incoming messages only when 'event_log_files' is enabled
 
 send_notification() {
-    echo 'naughty.notify({title = "'$1'", text = "'$2'"})' | awesome-client
+    notify-send  "$1" "$2"
 }
 
 ACTION_TYPE=$1
@@ -20,7 +20,7 @@ if [ $ACTION_TYPE = "MSG" ]; then
     case "$MSG_DIRECTION" in
         IN|MUC)
             if [ -n "$4" -a -f "$4" ]; then
-                MSG="$(cat $4 | perl -pe 's/\*//g')"
+                MSG="$(cat $4 | perl -pe 's/[*?]//g')"
                 send_notification "New message from $3" "$( echo $MSG | fold -s -w 50)"
                 rm $4
             else
@@ -36,8 +36,8 @@ elif [ $ACTION_TYPE = "STATUS" ]; then
          #D)      send_notification "$3" "$3 does not want to be disturbed.";;
          X)      send_notification "$3" "$3 sent a request." ;;
     esac
-elif [ $1 = "UNREAD" ]; then
-    NBR_MESSAGES=`echo $2 | tr ' ' '+' | bc`
-    send_notification "Unread messages" "There are $NBR_MESSAGES new messages."
+#elif [ $1 = "UNREAD" ]; then
+#    NBR_MESSAGES=`echo $2 | tr ' ' '+' | bc`
+#    send_notification "Unread messages" "There are $NBR_MESSAGES new messages."
 fi
 
