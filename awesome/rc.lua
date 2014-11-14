@@ -1,41 +1,52 @@
 -- Standard awesome library
-require("awful")
+local gears      =   require("gears")
+local awful      =   require("awful")
+awful.rules      =   require("awful.rules")
 require("awful.autofocus")
-require("awful.rules")
--- Theme handling library
-require("beautiful")
+
+-- Pulseaudio widget
+local APW = require("apw/widget")
+
 -- Notification library
-require("naughty")
+local naughty    =   require("naughty")
+local menubar    =   require("menubar")
+
 -- Widgets library
-require("vicious")
+local wibox      =   require("wibox")
 
 -- Load Debian menu entries
-require("debian.menu")
+local debianMenu =   require("debian.menu")
+
+-- Load Lain libraries
+local lain = require("lain")
 
 -- Help
 local keydoc = require("keydoc")
 
--- Sound Control
-function volume (mode, channel)
-    local volumedifference = "5dB"
-    local cardid  = 0
-    if mode == "get" then
-        local fd = io.popen("amixer -c " .. cardid .. " -- sget " .. channel)
-        local status = fd:read("*all")
-        fd:close()
-        local volume = string.match(status, "(%d?%d?%d)%%")
-        volume = string.format("% 3d", volume)
-        return volume
-    elseif mode == "up" then
-        io.popen("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. volumedifference .. "+"):read("*all")
-        return volume("get", channel)
-    elseif mode == "down" then
-        io.popen("amixer -q -c " .. cardid .. " sset " .. channel .. " " .. volumedifference .. "-"):read("*all")
-        return volume("get", channel)
-    else
-        return volume("get", channel)
-    end
+-- Theme handling library
+local beautiful  =   require("beautiful")
+
+
+-- {{{ Error handling
+if awesome.startup_errors then
+    naughty.notify({ preset = naughty.config.presets.critical,
+                     title = "Oops, there were errors during startup!",
+                     text = awesome.startup_errors })
 end
+
+do
+    local in_error = false
+    awesome.connect_signal("debug::error", function (err)
+        if in_error then return end
+        in_error = true
+
+        naughty.notify({ preset = naughty.config.presets.critical,
+                         title = "Oops, an error happened!",
+                         text = err })
+        in_error = false
+    end)
+end
+-- }}}
 
 -- MPD Control
 function mediaplayer (action)
@@ -62,7 +73,7 @@ function mediaplayer (action)
         status_line = fd:read("*line")
         fd:close()
         _, _, mpd_status, playlist_pos, duration = string.find(status_line, "%[(%a+)%]%s+#(%d*.%d*)%s+%d*:%d*/(%d*:%d*).*")
-        mpd_text = song_name .. " (" .. duration .. ")" .. " [" .. playlist_pos .. "]"
+        mpd_text = song_name .. " (" .. duration .. ")" -- .. " [" .. playlist_pos .. "]"
         mpd_text = string.gsub(mpd_text, "&", "&amp;")
     end
     
@@ -83,9 +94,9 @@ end
 -- Backlight control
 function backlight (action)
     if action == "inc" then
-        io.popen("xrandr --output LVDS1 --set BACKLIGHT 7")
+        awful.util.spawn_with_shell("xbacklight -inc 20")
     elseif action == "dec" then
-        io.popen("xrandr --output LVDS1 --set BACKLIGHT 0")
+        awful.util.spawn_with_shell("xbacklight -dec 20")
     end
 end
 
@@ -114,11 +125,11 @@ function screen_lock ( )
     local wall_number = math.random(1,6)
     local back = "-bg image:scale,file="..walls[wall_number]
     local curs = ""
-    io.popen("alock" .. " " .. auth .. " " .. back .. " " .. curs)
+    io.popen("/home/valdor/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
 end
 
 -- Sleep, shutdown and reboot actions 
-function power_function (action)
+function power_function (action, menu)
     naughty.notify({ title = "Menu", text = action, timeout = 2 })
     if (action == "Suspend") then
         screen_lock()
@@ -126,9 +137,9 @@ function power_function (action)
     elseif (action == "Hibernate") then
         screen_lock()
         io.popen('sudo s2disk')
+    else
+         naughty.notify({ title = "Unknown error", text = "Unknown action " .. action .. "."})
     end
-    
-    -- io.popen('dbus-send --system --print-reply --dest="org.freedesktop.Hal" /org/freedesktop/Hal/devices/computer org.freedesktop.Hal.Device.SystemPowerManagement.' .. action)
 end
 
 -- Information about active client
@@ -152,7 +163,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/home/valdor/.config/awesome/default/theme.lua")
+beautiful.init(os.getenv("HOME") .. "/.config/awesome/themes/valdor/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "x-terminal-emulator"
@@ -193,6 +204,14 @@ for s = 1, screen.count() do
 end
 -- }}}
 
+-- {{{ Wallpaper
+if beautiful.wallpaper then
+    for s = 1, screen.count() do
+        gears.wallpaper.maximized(beautiful.wallpaper, s, false)
+    end
+end
+-- }}}
+
 -- {{{ Menu
 -- Create a laucher widget and a main menu
 myawesomemenu = {
@@ -204,48 +223,69 @@ myawesomemenu = {
 
 
 mypowermenu = {
-    { "Suspend",  power_function },
-    { "Hibernate",  power_function },
+    { "Suspend",  function() power_function("Suspend") end },
+    { "Hibernate",  function() power_function("Hibernate") end},
 }
 
 
-
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "Debian", debian.menu.Debian_menu.Debian },
+                                    { "Debian", debianMenu.Debian_menu.Debian },
                                     { "open terminal", terminal },
                                     { "power", mypowermenu}
                                     }
                         })
 
-mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
+mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
 -- }}}
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock({ align = "right" })
-
-mysystray = widget({ type = "systray" })
+mytextclock = awful.widget.textclock()
+lain.widgets.calendar:attach(mytextclock, { cal = "/usr/bin/cal" })
 
 -- Separator
-separator = widget({ type = "textbox" })
-separator.text = " | "
+spr = wibox.widget.textbox('|')
 
--- Vicious widgets
--- MPD widget
-mpdwidget = widget({ type = "textbox" })
-vicious.register(mpdwidget, vicious.widgets.mpd,
-    function (widget, args)
-        if args["{state}"] == "Stop" then 
-            return "(Stopped)"
-        else 
-            return args["{Artist}"]..' - '.. args["{Title}"]
+-- Battery
+batwidget0 = lain.widgets.bat({
+    battery = "BAT0",
+    settings = function()
+        local arrow = "↑"
+        local arrow = "→"
+        if bat_now.status == "Charging" then
+            arrow = "↑"
         end
-    end, 5)
+        if bat_now.status == "Discharging" then
+            arrow = "↓"
+        end
+        widget:set_text("0: " .. arrow .. " " .. bat_now.perc .. "% (" .. bat_now.time .. ")")
+    end
+})
 
--- Battery widget
-batwidget = widget({ type = "textbox" })
-vicious.register(batwidget, vicious.widgets.bat, "$1 $2% ($3)", 10, "BAT1")
+batwidget1 = lain.widgets.bat({
+    battery = "BAT1",
+    notify = "off",
+    settings = function()
+        local arrow = "→"
+        if bat_now.status == "Charging" then
+            arrow = "↑"
+        end
+        if bat_now.status == "Discharging" then
+            arrow = "↓"
+        end
+        widget:set_text("1: " .. arrow .. " " .. bat_now.perc .. "% (" .. bat_now.time .. ")")
+    end
+})
+
+-- Coretemp
+tempicon = wibox.widget.imagebox(beautiful.widget_temp)
+tempwidget = lain.widgets.temp({
+    settings = function()
+        widget:set_text(" " .. coretemp_now .. "°C ")
+    end
+}, "#313131")
+
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -288,7 +328,7 @@ mytasklist.buttons = awful.util.table.join(
 
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
-    mypromptbox[s] = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
+    mypromptbox[s] = awful.widget.prompt()
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     mylayoutbox[s] = awful.widget.layoutbox(s)
@@ -298,34 +338,42 @@ for s = 1, screen.count() do
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     -- Create a taglist widget
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.label.all, mytaglist.buttons)
+    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
     -- Create a tasklist widget
-    mytasklist[s] = awful.widget.tasklist(function(c)
-                                             return awful.widget.tasklist.label.currenttags(c, s)
-                                         end, mytasklist.buttons)
+    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
     mywibox[s] = awful.wibox({ position = "top", screen = s })
     -- Add widgets to the wibox - order matters
-    mywibox[s].widgets = {
-        {
-            mylauncher,
-            mytaglist[s],
-            mypromptbox[s],
-            layout = awful.widget.layout.horizontal.leftright
-        },
-        mylayoutbox[s],
-        separator,
-        mytextclock,
-        separator,
-        mpdwidget,
-        separator,
-        batwidget,
-        s == 1 and mysystray or nil,
-        mytasklist[s],
-        layout = awful.widget.layout.horizontal.rightleft
-    }
+    local left_layout = wibox.layout.fixed.horizontal()
+    left_layout:add(mylauncher)
+    left_layout:add(mytaglist[s])
+    left_layout:add(mypromptbox[s])
+
+    -- Widgets that are aligned to the right
+    local right_layout = wibox.layout.fixed.horizontal()
+    if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(APW)
+    right_layout:add(spr)
+    right_layout:add(batwidget0)
+    right_layout:add(spr)
+    right_layout:add(batwidget1)
+    right_layout:add(spr)
+    right_layout:add(tempicon)
+    right_layout:add(tempwidget)
+    right_layout:add(spr)
+    right_layout:add(mytextclock)
+    right_layout:add(spr)
+    right_layout:add(mylayoutbox[s])
+
+    -- Now bring it all together (with the tasklist in the middle)
+    local layout = wibox.layout.align.horizontal()
+    layout:set_left(left_layout)
+    layout:set_middle(mytasklist[s])
+    layout:set_right(right_layout)
+
+    mywibox[s]:set_widget(layout)
 end
 -- }}}
 
@@ -389,16 +437,9 @@ globalkeys = awful.util.table.join(
             end)
         end, "Calculator"),
     -- Volume Controls
-    awful.key({         }, "XF86AudioRaiseVolume", 
-        function()
-            local result = volume("up", "Master")
-            naughty.notify({ title = "Master raised", text = "Set to " .. result, timeout = 2 })
-        end),
-    awful.key({         }, "XF86AudioLowerVolume",
-        function()
-            local result = volume("down", "Master")
-            naughty.notify({ title = "Master lowered", text = "Set to " .. result, timeout = 2 })
-        end),
+    awful.key({         }, "XF86AudioRaiseVolume",  APW.Up),
+    awful.key({         }, "XF86AudioLowerVolume",  APW.Down),
+    awful.key({         }, "XF86AudioMute",         APW.ToggleMute),
     awful.key({"Shift"  }, "XF86AudioRaiseVolume", 
         function()
             local result = volume("up", "Speaker")
@@ -423,22 +464,18 @@ globalkeys = awful.util.table.join(
     awful.key({         }, "XF86AudioPlay",
         function()
             mediaplayer("toggle")
-            vicious.force({mpdwidget})
         end),
     awful.key({         }, "XF86AudioStop",
         function()
             mediaplayer("stop")
-            vicious.force({mpdwidget})
         end),
     awful.key({         }, "XF86AudioNext",
         function()
             mediaplayer("next")
-            vicious.force({mpdwidget})
         end),
     awful.key({         }, "XF86AudioPrev",
         function()
             mediaplayer("prev")
-            vicious.force({mpdwidget})
         end),
     -- CRT/LCD key
     awful.key({         }, "#235",
@@ -539,7 +576,7 @@ awful.rules.rules = {
     { rule = { },
       properties = { border_width = beautiful.border_width,
                      border_color = beautiful.border_normal,
-                     focus = true,
+                     focus = awful.client.focus.filter,
                      keys = clientkeys,
                      maximized_vertical   = false,
                      maximized_horizontal = false,
@@ -556,12 +593,12 @@ awful.rules.rules = {
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
-client.add_signal("manage", function (c, startup)
+client.connect_signal("manage", function (c, startup)
     -- Add a titlebar
     -- awful.titlebar.add(c, { modkey = modkey })
 
     -- Enable sloppy focus
-    c:add_signal("mouse::enter", function(c)
+    c:connect_signal("mouse::enter", function(c)
         if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
             and awful.client.focus.filter(c) then
             client.focus = c
@@ -581,6 +618,8 @@ client.add_signal("manage", function (c, startup)
     end
 end)
 
-client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+os.execute("/home/valdor/.xprofile")
