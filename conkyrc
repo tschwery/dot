@@ -17,7 +17,7 @@ update_interval 5.0
 
 # Create own window instead of using desktop (required in nautilus)
 own_window yes
-own_window_type desktop
+own_window_type override
 own_window_transparent yes
 
 # Use double buffering (reduces flicker, may not work for everyone)
@@ -52,10 +52,9 @@ default_shade_color grey60
 default_outline_color DarkGrey
 
 # Used for the titles
-color1 F0F0F0
-#color1 aabbaa
+color1 303030
 # Used for the entries
-color2 B0B0B0
+color2 101010
 
 # Text alignment, other possible values are commented
 #alignment top_left
@@ -84,8 +83,8 @@ imlib_cache_size 0
 
 TEXT
 ${font DejaVuSansMono:size=9}
-${color1}ETH0:${color2} ${addrs eth0} ${upspeed eth0} / ${downspeed eth0} ${alignr}${color1}WLAN0:${color2} ${upspeed wlan0} / ${downspeed wlan0} ${addrs wlan0}
-${color1}Last backup: ${color2}${execpi 60 cat .last_backup} ${alignr}${wireless_link_qual_perc wlan0}% ${wireless_essid wlan0}
+${color1}ETH1:${color2} ${addrs eth1} ${upspeed eth1} / ${downspeed eth1} ${alignr}${color1}WLAN1:${color2} ${upspeed wlan1} / ${downspeed wlan1} ${addrs wlan1}
+${color1}${alignr}${wireless_link_qual_perc wlan1}% ${wireless_essid wlan1}
 ${color2}$hr
 ${color1}/    :${color2}${fs_free /} ${fs_bar 5,175 /} ${alignr}${fs_bar 5,175 /home/valdor} ${color1}/home:${color2}${fs_free /home/valdor}
 ${color2}$hr
