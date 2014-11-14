@@ -81,6 +81,9 @@ fi
 
 export MANPAGER="/usr/bin/most -s"
 
+PATH="$HOME/.local/bin/:$PATH"
+export PATH
+
 if [ -f ~/.bash_local ]; then
     . ~/.bash_local
 fi
