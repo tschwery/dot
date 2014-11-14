@@ -4,6 +4,7 @@ syntax: glob
 awesome/debian/menu.lua
 awesome/vicious
 awesome/default
+awesome/lain
 
 mpd/state
 mpd/sticker.sql
@@ -19,3 +20,5 @@ calcurse/todo
 # Ignore log that can appear
 *.log
 *.pid
+
+.git
