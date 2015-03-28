@@ -73,7 +73,7 @@ function mediaplayer (action)
         status_line = fd:read("*line")
         fd:close()
         _, _, mpd_status, playlist_pos, duration = string.find(status_line, "%[(%a+)%]%s+#(%d*.%d*)%s+%d*:%d*/(%d*:%d*).*")
-        mpd_text = song_name .. " (" .. duration .. ")" -- .. " [" .. playlist_pos .. "]"
+        mpd_text = song_name .. " (" .. duration .. ")" .. " [" .. playlist_pos .. "]"
         mpd_text = string.gsub(mpd_text, "&", "&amp;")
     end
     
@@ -103,7 +103,6 @@ end
 -- Lock mechanism
 function screen_lock ( )
     local lock_folder="/home/valdor/Divers/Lockscreens/"
-
     local auth = "-auth pam"
     local locks_iterator = io.popen('ls "' .. lock_folder .. '"'):lines()
     local locks = {}
@@ -255,11 +254,9 @@ lain.widgets.calendar:attach(mytextclock, { cal = "/usr/bin/cal -h" })
 -- Separator
 spr = wibox.widget.textbox('|')
 
--- Battery
 batwidget0 = lain.widgets.bat({
     battery = "BAT0",
     settings = function()
-        local arrow = "↑"
         local arrow = "→"
         if bat_now.status == "Charging" then
             arrow = "↑"
