@@ -2,9 +2,8 @@ syntax: glob
 
 # Ignore some parts that are not configuration
 awesome/debian/menu.lua
-awesome/vicious
-awesome/default
 awesome/lain
+awesome/apw
 
 mpd/state
 mpd/sticker.sql

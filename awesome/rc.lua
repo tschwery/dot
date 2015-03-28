@@ -100,38 +100,28 @@ function backlight (action)
     end
 end
 
--- Display todolist in notification
-function todo_notification()
-    local fd = io.popen("todo")
-    local todos
-    if (not (fd == nil)) then
-        todos = fd:read("*all")
-    end
-    naughty.notify({ title = "TODO List", text = todos, timeout = 15 })
-end
-
 -- Lock mechanism
 function screen_lock ( )
-    local wall_folder="/home/valdor/.alockimages/"
+    local lock_folder="/home/valdor/Divers/Lockscreens/"
 
     local auth = "-auth pam"
-    local walls_iterator = io.popen('ls "' .. wall_folder .. '"'):lines()
-    local walls = {}
-    for v in walls_iterator do
-        walls[#walls + 1] = v
+    local locks_iterator = io.popen('ls "' .. lock_folder .. '"'):lines()
+    local locks = {}
+    for v in locks_iterator do
+        locks[#locks + 1] = v
     end
-    local wall_number = math.random(1,#walls)
-    local back = "-bg image:scale,file='" .. wall_folder .. walls[wall_number] .. "'"
+    local lock_number = math.random(1,#locks)
+    local back = "-bg image:scale,file='" .. lock_folder .. locks[lock_number] .. "'"
     local curs = ""
-    io.popen("/home/valdor/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
+    awful.util.spawn_with_shell("/home/valdor/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
 end
 
 -- Sleep, shutdown and reboot actions 
 function power_function (action, menu)
-    naughty.notify({ title = "Menu", text = action, timeout = 2 })
+    naughty.notify({ title = "Menu", text = menu, timeout = 2 })
     if (action == "Suspend") then
         screen_lock()
-        io.popen('sudo s2ram')
+        io.popen('sudo s2ram --force')
     elseif (action == "Hibernate") then
         screen_lock()
         io.popen('sudo s2disk')
@@ -199,11 +189,36 @@ end
 -- }}}
 
 -- {{{ Wallpaper
-if beautiful.wallpaper then
-    for s = 1, screen.count() do
-        gears.wallpaper.maximized(beautiful.wallpaper, s, false)
-    end
+local wp_timeout = 60
+local wp_path = "/home/valdor/Divers/Wallpapers/"
+local wp_init = function ()
+    local walls_iterator = io.popen('ls "' .. wp_path .. '"'):lines()
+    walls = {}
+    for v in walls_iterator do
+        walls[#walls + 1] = v
+    end 
 end
+
+local wp_load = function ()
+    for s = 1, screen.count() do
+        local wall_number = math.random(1,#walls)
+        local back =  wp_path .. walls[wall_number]
+        gears.wallpaper.maximized(back, s, false)
+    end
+
+    wp_timer:stop()
+    wp_timer.timeout = wp_timeout
+    wp_timer:start()
+end
+
+wp_timer = timer { timeout = wp_timeout }
+wp_timer:connect_signal("timeout", wp_load)
+
+wp_init()
+wp_load()
+
+math.randomseed( os.time() )
+for i = 1, 1000 do tmp=math.random(0,1000) end
 -- }}}
 
 -- {{{ Menu
@@ -218,7 +233,6 @@ myawesomemenu = {
 
 mypowermenu = {
     { "Suspend",  function() power_function("Suspend") end },
-    { "Hibernate",  function() power_function("Hibernate") end},
 }
 
 
@@ -236,7 +250,7 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
-lain.widgets.calendar:attach(mytextclock, { cal = "/usr/bin/cal" })
+lain.widgets.calendar:attach(mytextclock, { cal = "/usr/bin/cal -h" })
 
 -- Separator
 spr = wibox.widget.textbox('|')
@@ -349,10 +363,6 @@ for s = 1, screen.count() do
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(APW)
-    right_layout:add(spr)
-    right_layout:add(batwidget0)
-    right_layout:add(spr)
-    right_layout:add(batwidget1)
     right_layout:add(spr)
     right_layout:add(tempicon)
     right_layout:add(tempwidget)
@@ -616,4 +626,4 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
-os.execute("/home/valdor/.xprofile")
+-- os.execute("/home/valdor/.xprofile")
