@@ -432,10 +432,14 @@ globalkeys = awful.util.table.join(
               end, "Lua prompt"),
 
     -- Personal bindings
-    awful.key({ modkey,           }, "t",     function() todo_notification() end, "Display todo list"),
+    awful.key({ modkey,           }, "w",
+        function()
+            wp_init()
+            wp_load()
+        end, "Refresh wallpaper"),
     awful.key({modkey   }, "c",
         function()
-            awful.prompt.run({ prompt = "Calculate: " }, mypromptbox[mouse.screen].widget,
+            awful.prompt.run({ prompt = "Compute: " }, mypromptbox[mouse.screen].widget,
             function (expr)
                 naughty.notify({ title = "Calculator", text = expr .. ' = ' .. awful.util.eval("return (" .. expr .. ")"), timeout = 15})
             end)
@@ -444,26 +448,6 @@ globalkeys = awful.util.table.join(
     awful.key({         }, "XF86AudioRaiseVolume",  APW.Up),
     awful.key({         }, "XF86AudioLowerVolume",  APW.Down),
     awful.key({         }, "XF86AudioMute",         APW.ToggleMute),
-    awful.key({"Shift"  }, "XF86AudioRaiseVolume", 
-        function()
-            local result = volume("up", "Speaker")
-            naughty.notify({ title = "Speaker raised", text = "Set to " .. result, timeout = 2 })
-        end),
-    awful.key({"Shift"  }, "XF86AudioLowerVolume",
-        function()
-            local result = volume("down", "Speaker")
-            naughty.notify({ title = "Speaker lowered", text = "Set to " .. result, timeout = 2 })
-        end),
-    awful.key({"Control" }, "XF86AudioRaiseVolume", 
-        function()
-            local result = volume("up", "Headphone")
-            naughty.notify({ title = "Headphone raised", text = "Set to " .. result, timeout = 2 })
-        end),
-    awful.key({"Control"  }, "XF86AudioLowerVolume",
-        function()
-            local result = volume("down", "Headphone")
-            naughty.notify({ title = "Headphone lowered", text = "Set to " .. result, timeout = 2 })
-        end),
     -- MPD Controls
     awful.key({         }, "XF86AudioPlay",
         function()
