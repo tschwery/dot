@@ -102,7 +102,7 @@ end
 
 -- Lock mechanism
 function screen_lock ( )
-    local lock_folder="/home/valdor/Divers/Lockscreens/"
+    local lock_folder=os.getenv("HOME") .. "/Divers/Lockscreens/"
     local auth = "-auth pam"
     local locks_iterator = io.popen('ls "' .. lock_folder .. '"'):lines()
     local locks = {}
@@ -112,7 +112,7 @@ function screen_lock ( )
     local lock_number = math.random(1,#locks)
     local back = "-bg image:scale,file='" .. lock_folder .. locks[lock_number] .. "'"
     local curs = ""
-    awful.util.spawn_with_shell("/home/valdor/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
+    awful.util.spawn_with_shell(os.getenv("HOME") .. "/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
 end
 
 -- Sleep, shutdown and reboot actions 
@@ -189,7 +189,7 @@ end
 
 -- {{{ Wallpaper
 local wp_timeout = 60
-local wp_path = "/home/valdor/Divers/Wallpapers/"
+local wp_path = os.getenv("HOME") .. "/Divers/Wallpapers/"
 local wp_init = function ()
     local walls_iterator = io.popen('ls "' .. wp_path .. '"'):lines()
     walls = {}
@@ -607,4 +607,3 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
--- os.execute("/home/valdor/.xprofile")
