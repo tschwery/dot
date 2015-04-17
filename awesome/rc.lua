@@ -112,7 +112,12 @@ function screen_lock ( )
     local lock_number = math.random(1,#locks)
     local back = "-bg image:scale,file='" .. lock_folder .. locks[lock_number] .. "'"
     local curs = ""
-    awful.util.spawn_with_shell(os.getenv("HOME") .. "/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
+    local lock_timer = timer { timeout = 1 }
+    lock_timer:connect_signal("timeout", function() 
+        awful.util.spawn_with_shell(os.getenv("HOME") .. "/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
+        lock_timer:stop()
+    end)
+    lock_timer:start()
 end
 
 -- Sleep, shutdown and reboot actions 
@@ -120,10 +125,12 @@ function power_function (action, menu)
     naughty.notify({ title = "Menu", text = menu, timeout = 2 })
     if (action == "Suspend") then
         screen_lock()
-        io.popen('sudo s2ram --force')
-    elseif (action == "Hibernate") then
-        screen_lock()
-        io.popen('sudo s2disk')
+        local sleep_timer = timer { timeout = 2 }
+        sleep_timer:connect_signal("timeout", function() 
+            io.popen('sudo s2ram --force') 
+            sleep_timer:stop()
+        end)
+        sleep_timer:start()
     else
          naughty.notify({ title = "Unknown error", text = "Unknown action " .. action .. "."})
     end
@@ -204,10 +211,6 @@ local wp_load = function ()
         local back =  wp_path .. walls[wall_number]
         gears.wallpaper.maximized(back, s, false)
     end
-
-    wp_timer:stop()
-    wp_timer.timeout = wp_timeout
-    wp_timer:start()
 end
 
 wp_timer = timer { timeout = wp_timeout }
