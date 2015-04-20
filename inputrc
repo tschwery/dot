@@ -20,3 +20,7 @@ set completion-prefix-display-length 2
 # Ctrl-j/k to cycle through the available completions
 Control-j: menu-complete
 Control-k: menu-complete-backward
+
+# alternate mappings for "page up" and "page down" to search the history
+"\e[5~": history-search-backward
+"\e[6~": history-search-forward
