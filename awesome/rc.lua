@@ -576,6 +576,10 @@ awful.rules.rules = {
       properties = { tag = tags[1][1] } },
     { rule = { instance = "Mail" },
       properties = { tag = tags[1][2] } },
+    { rule = { instance = "sun-awt-X11-XFramePeer" },
+      properties = { floating = true } },
+    { rule = { class = "VirtualBox" },
+      properties = { floating = true } }
 }
 -- }}}
 
