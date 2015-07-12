@@ -9,6 +9,8 @@ mpd/state
 mpd/sticker.sql
 mpd/tag_cache
 
+nano/search_history
+
 # Ignore personal data
 mcabber/account.mc
 mcabber/histo
