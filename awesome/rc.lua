@@ -127,7 +127,7 @@ function power_function (action, menu)
         screen_lock()
         local sleep_timer = timer { timeout = 2 }
         sleep_timer:connect_signal("timeout", function() 
-            io.popen('sudo s2ram --force') 
+            io.popen('systemctl suspend') 
             sleep_timer:stop()
         end)
         sleep_timer:start()
@@ -506,8 +506,7 @@ clientkeys = awful.util.table.join(
     awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end, "Close window"),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     , "Toggle floating mode"),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end, "Move selected window to main position"),
-    awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        , "Move selected window to next screen"),
-    awful.key({ modkey, "Shift"   }, "r",      function (c) c:redraw()                       end, "Redraw selected window")
+    awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        , "Move selected window to next screen")
 )
 
 -- Compute the maximum number of digit we need, limited to 10
