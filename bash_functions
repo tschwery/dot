@@ -26,6 +26,23 @@ function gen_password {
     head -c24 /dev/urandom | base64 | head -c $length | sed 's/$/\n/'
 }
 
+function gen-monkey-pass {
+    [[ $(echo "$1"|grep -E '[0-9]+') ]] && NUM="$1" || NUM=1
+    for I in $(seq 1 "$NUM"); do
+        LC_CTYPE=C strings /dev/urandom|grep -o '[a-hjkmnp-z2-9-]'|head -n 16|paste -sd '' -
+    done | column
+}
+
+function gen-xkcd-pass {
+    [[ $(echo "$1"|grep -E '[0-9]+') ]] && NUM="$1" || NUM=1
+    DICT=$(LC_CTYPE=C grep -E '^[a-Z]{3,6}$' /usr/share/dict/words)
+    for I in $(seq 1 "$NUM"); do
+        WORDS=$(echo "$DICT"|shuf -n 6|paste -sd ' ' -)
+        XKCD=$(echo -n "$WORDS"|sed 's/ //g')
+        echo "$XKCD ($WORDS)"|awk '{x=$1;$1="";printf "%-36s %s\n", x, $0}'
+    done | column
+}
+
 function reverse_md5 {
     hash=$1
     if [ -z "$hash" ]; then echo "Please give a hash ..."; return 1; fi
