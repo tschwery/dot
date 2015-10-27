@@ -1,0 +1,6 @@
+[submodule "awesome/apw"]
+	path = awesome/apw
+	url = https://github.com/mokasin/apw.git
+[submodule "awesome/lain"]
+	path = awesome/lain
+	url = https://github.com/copycat-killer/lain.git
