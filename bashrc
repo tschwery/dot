@@ -38,8 +38,11 @@ set_prompt() {
 
     command="${BLUE}\!"
 
-    user="${GREEN}\u"
-    host="${GREEN}\h"
+    ucolor="${GREEN}"
+    if [ $UID -lt 1000 ]; then ucolor="${RED}"; fi
+
+    user="${ucolor}\u"
+    host="${ucolor}\h"
 
     path="${BLUE}\w"
 
