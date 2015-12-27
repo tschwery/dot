@@ -48,6 +48,73 @@ do
 end
 -- }}}
 
+-- {{{ Battery widget
+
+function batteryInfo(bwidget, adapter, popup)
+    local fcur = io.open("/sys/class/power_supply/"..adapter.."/energy_now")
+    local fcap = io.open("/sys/class/power_supply/"..adapter.."/energy_full")
+    local fsta = io.open("/sys/class/power_supply/"..adapter.."/status")
+
+    local cur = fcur:read()
+    local cap = fcap:read()
+    local sta = fsta:read()
+    local battery = math.floor(cur * 100 / cap)
+
+    fcur:close()
+    fcap:close()
+    fsta:close()
+
+    if sta:match("Charging") then
+        dir = "⚡"
+    elseif sta:match("Discharging") then
+        dir = "🔋"
+        if tonumber(battery) < 10 then
+            naughty.notify({ title      = "Battery Warning"
+                           , text       = "Battery low! " .. battery .. "% left!"
+                           , timeout    = 5
+                           , position   = "top_right"
+                           , fg         = beautiful.fg_focus
+                           , bg         = beautiful.bg_focus
+                           })
+        end
+    else
+        dir = "="
+    end
+    local indicator = ""
+    local battery_ten = math.floor(battery / 10)
+    for f = 1,battery_ten do
+        indicator = indicator .. "<span foreground='#cc3333'>♥</span>"
+    end
+    for f = battery_ten,9 do
+        indicator = indicator .. "♡"
+    end
+
+    bwidget:set_markup(dir .. indicator)
+end
+
+batt_widgets = {}
+for i = 0,9 do
+    local battery_widget = wibox.widget.textbox()
+    battery_widget:set_align("right")
+
+    local adapter = "BAT" .. i
+    local test_file = "/sys/class/power_supply/" .. adapter .. "/"
+
+    local test_f = io.open(test_file)
+
+    if (test_f ~= nil) then
+        local battery_timer = timer({timeout = 20})
+        battery_timer:connect_signal("timeout", function()
+            batteryInfo(battery_widget, "BAT" .. i, true)
+        end)
+        battery_timer:start()
+        batteryInfo(battery_widget, "BAT" .. i, true)
+
+        batt_widgets[i + 1] = battery_widget
+    end
+end
+-- }}}
+
 -- MPD Control
 function mediaplayer (action)
     local mpd_status
@@ -257,35 +324,6 @@ lain.widgets.calendar:attach(mytextclock, { cal = "/usr/bin/cal -h" })
 -- Separator
 spr = wibox.widget.textbox('|')
 
-batwidget0 = lain.widgets.bat({
-    battery = "BAT0",
-    settings = function()
-        local arrow = "→"
-        if bat_now.status == "Charging" then
-            arrow = "↑"
-        end
-        if bat_now.status == "Discharging" then
-            arrow = "↓"
-        end
-        widget:set_text("0: " .. arrow .. " " .. bat_now.perc .. "% (" .. bat_now.time .. ")")
-    end
-})
-
-batwidget1 = lain.widgets.bat({
-    battery = "BAT1",
-    notify = "off",
-    settings = function()
-        local arrow = "→"
-        if bat_now.status == "Charging" then
-            arrow = "↑"
-        end
-        if bat_now.status == "Discharging" then
-            arrow = "↓"
-        end
-        widget:set_text("1: " .. arrow .. " " .. bat_now.perc .. "% (" .. bat_now.time .. ")")
-    end
-})
-
 -- Coretemp
 tempicon = wibox.widget.imagebox(beautiful.widget_temp)
 tempwidget = lain.widgets.temp({
@@ -364,6 +402,10 @@ for s = 1, screen.count() do
     if s == 1 then right_layout:add(wibox.widget.systray()) end
     right_layout:add(APW)
     right_layout:add(spr)
+    for i,batt_widget in ipairs(batt_widgets) do
+        right_layout:add(batt_widget)
+        right_layout:add(spr)
+    end
     right_layout:add(tempicon)
     right_layout:add(tempwidget)
     right_layout:add(spr)
