@@ -262,7 +262,7 @@ end
 -- }}}
 
 -- {{{ Wallpaper
-local wp_timeout = 60
+local wp_timeout = 600
 local wp_path = os.getenv("HOME") .. "/Divers/Wallpapers/"
 local wp_init = function ()
     local walls_iterator = io.popen('ls "' .. wp_path .. '"'):lines()
@@ -282,12 +282,12 @@ end
 
 wp_timer = timer { timeout = wp_timeout }
 wp_timer:connect_signal("timeout", wp_load)
+wp_timer:start()
 
 wp_init()
 wp_load()
 
 math.randomseed( os.time() )
-for i = 1, 1000 do tmp=math.random(0,1000) end
 -- }}}
 
 -- {{{ Menu
