@@ -4,9 +4,6 @@ local awful      =   require("awful")
 awful.rules      =   require("awful.rules")
 require("awful.autofocus")
 
--- Pulseaudio widget
-local APW = require("apw/widget")
-
 -- Notification library
 local naughty    =   require("naughty")
 local menubar    =   require("menubar")
@@ -49,7 +46,6 @@ end
 -- }}}
 
 -- {{{ Battery widget
-
 function batteryInfo(bwidget, adapter, popup)
     local fcur = io.open("/sys/class/power_supply/"..adapter.."/energy_now")
     local fcap = io.open("/sys/class/power_supply/"..adapter.."/energy_full")
@@ -63,6 +59,8 @@ function batteryInfo(bwidget, adapter, popup)
     fcur:close()
     fcap:close()
     fsta:close()
+
+    local dir = " "
 
     if sta:match("Charging") then
         dir = "⚡"
@@ -115,6 +113,113 @@ for i = 0,9 do
 end
 -- }}}
 
+-- {{{ Sound widget
+local paCmd = "pacmd"
+
+function paDefaultSink(dumpLines)
+    local paSink = string.match(dumpLines, "set%-default%-sink ([^\n]+)")
+    return paSink
+end
+
+function paCurrentVolume(dumpLines)
+    local default_sink = paDefaultSink(dumpLines)
+    local paVolume = -1
+
+    for sink, value in string.gmatch(dumpLines, "set%-sink%-volume ([^%s]+) (0x%x+)") do
+        if sink == default_sink then
+            paVolume = tonumber(value) / 0x10000
+        end
+    end
+
+    local m = "no"
+    for sink, value in string.gmatch(dumpLines, "set%-sink%-mute ([^%s]+) (%a+)") do
+        if sink == default_sink then
+            m = value
+        end
+    end
+
+    if (m == "yes") then
+         paVolume = 0
+    end
+
+    return paVolume
+end
+
+function soundInfo(swidget)
+    local f = io.popen(paCmd .. " dump")
+
+    if f == nil then
+        return false
+    end
+
+    local fout = f:read("*a")
+    local paSink = paDefaultSink(fout)
+    local paVolume = paCurrentVolume(fout)
+
+    local indicator = ""
+    local sound_ten = math.ceil(paVolume * 10)
+    for f = 1,sound_ten do
+        indicator = indicator .. "<span foreground='#3333cc'>🔉</span>"
+    end
+    for f = sound_ten,9 do
+        indicator = indicator .. "🔊"
+    end
+
+    swidget:set_markup(indicator)
+end
+
+local sound_widget = wibox.widget.textbox()
+sound_widget:set_align("right")
+
+local sound_timer = timer({timeout = 20})
+sound_timer:connect_signal("timeout", function()
+    soundInfo(sound_widget)
+end)
+sound_timer:start()
+soundInfo(sound_widget)
+
+function paSetVolume(action)
+    local f = io.popen(paCmd .. " dump")
+
+    if f == nil then
+        return false
+    end
+
+    local fout = f:read("*a")
+
+    local paSink = paDefaultSink(fout)
+
+    if paSink == nil then
+        naughty.notify({ title = "PulseAudio", text = "No default sink available for volume." .. fout})
+        return nil
+    end
+
+    local paVolume = paCurrentVolume(fout)
+
+    if action == "up" then
+        paVolume = paVolume + 0.1
+    elseif action == "down" then
+        paVolume = paVolume - 0.1
+    elseif action == "mute" then
+        paVolume = 0
+    end
+
+    if paVolume > 1 then
+        paVolume = 1
+    end
+
+    if paVolume < 0 then
+        paVolume = 0
+    end
+
+    local intVol = paVolume * 0x10000
+
+    io.popen(paCmd .. " set-sink-volume " .. paSink .. " " .. string.format("0x%x", math.floor(intVol)))
+
+    soundInfo(sound_widget)
+end
+-- }}}
+
 -- MPD Control
 function mediaplayer (action)
     local mpd_status
@@ -125,7 +230,7 @@ function mediaplayer (action)
         mpd_status = "stop"
         mpd_text = "Stopped"
     end
-    
+
     local fd
     if action == "toggle" then
         fd = io.popen("mpc toggle")
@@ -143,9 +248,9 @@ function mediaplayer (action)
         mpd_text = song_name .. " (" .. duration .. ")" .. " [" .. playlist_pos .. "]"
         mpd_text = string.gsub(mpd_text, "&", "&amp;")
     end
-    
+
     mpd_status = mpd_status:gsub("%a", string.upper, 1)
-    
+
     if (mpd_status == "Playing") then
         mpd_status = "<span color='#33CC00'>" .. mpd_status .. "</span>"
     else
@@ -180,21 +285,21 @@ function screen_lock ( )
     local back = "-bg image:scale,file='" .. lock_folder .. locks[lock_number] .. "'"
     local curs = ""
     local lock_timer = timer { timeout = 1 }
-    lock_timer:connect_signal("timeout", function() 
+    lock_timer:connect_signal("timeout", function()
         awful.util.spawn_with_shell(os.getenv("HOME") .. "/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
         lock_timer:stop()
     end)
     lock_timer:start()
 end
 
--- Sleep, shutdown and reboot actions 
+-- Sleep, shutdown and reboot actions
 function power_function (action, menu)
     naughty.notify({ title = "Menu", text = menu, timeout = 2 })
     if (action == "Suspend") then
         screen_lock()
         local sleep_timer = timer { timeout = 2 }
-        sleep_timer:connect_signal("timeout", function() 
-            io.popen('systemctl suspend') 
+        sleep_timer:connect_signal("timeout", function()
+            io.popen('systemctl suspend')
             sleep_timer:stop()
         end)
         sleep_timer:start()
@@ -269,7 +374,7 @@ local wp_init = function ()
     walls = {}
     for v in walls_iterator do
         walls[#walls + 1] = v
-    end 
+    end
 end
 
 local wp_load = function ()
@@ -400,7 +505,7 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then right_layout:add(wibox.widget.systray()) end
-    right_layout:add(APW)
+    right_layout:add(sound_widget)
     right_layout:add(spr)
     for i,batt_widget in ipairs(batt_widgets) do
         right_layout:add(batt_widget)
@@ -487,9 +592,9 @@ globalkeys = awful.util.table.join(
             end)
         end, "Calculator"),
     -- Volume Controls
-    awful.key({         }, "XF86AudioRaiseVolume",  APW.Up),
-    awful.key({         }, "XF86AudioLowerVolume",  APW.Down),
-    awful.key({         }, "XF86AudioMute",         APW.ToggleMute),
+    awful.key({         }, "XF86AudioRaiseVolume",  function() paSetVolume("up") end),
+    awful.key({         }, "XF86AudioLowerVolume",  function() paSetVolume("down") end),
+    awful.key({         }, "XF86AudioMute",         function() paSetVolume("mute") end),
     -- MPD Controls
     awful.key({         }, "XF86AudioPlay",
         function()
@@ -535,7 +640,7 @@ globalkeys = awful.util.table.join(
             naughty.notify({ title = "Window screenshot taken", timeout = 2 })
         end, "Screenshot Selection"),
     awful.key({modkey   }, "F12",                   function() screen_lock() end,     "Lock Screen"),
-    awful.key({ modkey  }, "F1",                    keydoc.display,                   "Display help"), 
+    awful.key({ modkey  }, "F1",                    keydoc.display,                   "Display help"),
     awful.key({         }, "XF86MonBrightnessUp",   function() backlight("inc") end,  "Increase brightness"),
     awful.key({         }, "XF86MonBrightnessDown", function() backlight("dec") end , "Decrease brightness"),
     awful.key({ modkey  }, "i",                     function() client_function() end, "Client information")
@@ -543,7 +648,7 @@ globalkeys = awful.util.table.join(
 )
 
 clientkeys = awful.util.table.join(
-    keydoc.group("Client manipulation"),    
+    keydoc.group("Client manipulation"),
     awful.key({ modkey,           }, "f",      function (c) c.fullscreen = not c.fullscreen  end, "Switch fullscreen"),
     awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end, "Close window"),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     , "Toggle floating mode"),
