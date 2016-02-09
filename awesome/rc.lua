@@ -54,7 +54,14 @@ function batteryInfo(bwidget, adapter, popup)
     local cur = fcur:read()
     local cap = fcap:read()
     local sta = fsta:read()
-    local battery = math.floor(cur * 100 / cap)
+    if cap == nil then
+        cap = math.huge
+    else
+        cap = tonumber(cap)
+    end
+    cur = tonumber(cur)
+
+    local battery = (100 * cur) / cap
 
     fcur:close()
     fcap:close()
@@ -66,8 +73,8 @@ function batteryInfo(bwidget, adapter, popup)
         dir = "⚡"
     elseif sta:match("Discharging") then
         dir = "🔋"
-        if tonumber(battery) < 10 then
-            naughty.notify({ title      = "Battery Warning"
+        if battery < 10 and popup then
+            naughty.notify({ title      = "Battery " .. adapter .. " Warning"
                            , text       = "Battery low! " .. battery .. "% left!"
                            , timeout    = 5
                            , position   = "top_right"
@@ -103,7 +110,7 @@ for i = 0,9 do
     if (test_f ~= nil) then
         local battery_timer = timer({timeout = 20})
         battery_timer:connect_signal("timeout", function()
-            batteryInfo(battery_widget, "BAT" .. i, true)
+            batteryInfo(battery_widget, "BAT" .. i, i == 1)
         end)
         battery_timer:start()
         batteryInfo(battery_widget, "BAT" .. i, true)
