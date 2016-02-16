@@ -45,6 +45,36 @@ do
 end
 -- }}}
 
+-- {{{ Variable definitions
+-- Themes define colours, icons, and wallpapers
+beautiful.init(os.getenv("HOME") .. "/.config/awesome/themes/valdor/theme.lua")
+
+-- This is used later as the default terminal and editor to run.
+terminal = "x-terminal-emulator"
+editor = os.getenv("EDITOR") or "editor"
+editor_cmd = terminal .. " -e " .. editor
+
+-- Default modkey.
+-- Usually, Mod4 is the key with a logo between Control and Alt.
+-- If you do not like this or do not have such a key,
+-- I suggest you to remap Mod4 to another key using xmodmap or other tools.
+-- However, you can use another modifier like Mod1, but it may interact with others.
+modkey = "Mod4"
+
+-- Table of layouts to cover with awful.layout.inc, order matters.
+layouts =
+{
+    awful.layout.suit.floating,
+    awful.layout.suit.tile,
+    awful.layout.suit.tile.left,
+    awful.layout.suit.tile.bottom,
+    awful.layout.suit.tile.top,
+    awful.layout.suit.fair,
+    awful.layout.suit.fair.horizontal,
+    awful.layout.suit.max,
+}
+-- }}}
+
 -- {{{ Battery widget
 function batteryInfo(bwidget, adapter, popup)
     local fcur = io.open("/sys/class/power_supply/"..adapter.."/energy_now")
@@ -88,7 +118,7 @@ function batteryInfo(bwidget, adapter, popup)
     local indicator = ""
     local battery_ten = math.floor(battery / 10)
     for f = 1,battery_ten do
-        indicator = indicator .. "<span foreground='#cc3333'>♥</span>"
+        indicator = indicator .. "<span foreground='" .. beautiful.widget_color_battery .. "'>♥</span>"
     end
     for f = battery_ten,9 do
         indicator = indicator .. "♡"
@@ -122,6 +152,7 @@ end
 
 -- {{{ Sound widget
 local paCmd = "pacmd"
+local paMixer = "pavucontrol"
 
 function paDefaultSink(dumpLines)
     local paSink = string.match(dumpLines, "set%-default%-sink ([^\n]+)")
@@ -166,7 +197,7 @@ function soundInfo(swidget)
     local indicator = ""
     local sound_ten = math.ceil(paVolume * 10)
     for f = 1,sound_ten do
-        indicator = indicator .. "<span foreground='#3333cc'>🔉</span>"
+        indicator = indicator .. "<span foreground='" .. beautiful.widget_color_sound .. "'>🔉</span>"
     end
     for f = sound_ten,9 do
         indicator = indicator .. "🔊"
@@ -177,6 +208,13 @@ end
 
 local sound_widget = wibox.widget.textbox()
 sound_widget:set_align("right")
+sound_widget:buttons(awful.util.table.join(
+                        awful.button({ }, 1, function () paSetVolume("mute") end),
+                        awful.button({ }, 3, function () awful.util.spawn_with_shell( paMixer ) end),
+                        awful.button({ }, 4, function () paSetVolume("up") end),
+                        awful.button({ }, 5, function () paSetVolume("down") end)
+                        )
+                    )
 
 local sound_timer = timer({timeout = 20})
 sound_timer:connect_signal("timeout", function()
@@ -334,36 +372,6 @@ function client_function ( )
     naughty.notify({ title = "Client: " .. awful.client.getmaster().name, text = "PID: " .. pid .. "\nCPU: " .. cpu_percent .. "\nMemory : " .. memory, timeout=10})
 end
 
--- {{{ Variable definitions
--- Themes define colours, icons, and wallpapers
-beautiful.init(os.getenv("HOME") .. "/.config/awesome/themes/valdor/theme.lua")
-
--- This is used later as the default terminal and editor to run.
-terminal = "x-terminal-emulator"
-editor = os.getenv("EDITOR") or "editor"
-editor_cmd = terminal .. " -e " .. editor
-
--- Default modkey.
--- Usually, Mod4 is the key with a logo between Control and Alt.
--- If you do not like this or do not have such a key,
--- I suggest you to remap Mod4 to another key using xmodmap or other tools.
--- However, you can use another modifier like Mod1, but it may interact with others.
-modkey = "Mod4"
-
--- Table of layouts to cover with awful.layout.inc, order matters.
-layouts =
-{
-    awful.layout.suit.floating,
-    awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.bottom,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
-    awful.layout.suit.max,
-}
--- }}}
-
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {}
@@ -411,11 +419,9 @@ myawesomemenu = {
    { "quit", awesome.quit }
 }
 
-
 mypowermenu = {
     { "Suspend",  function() power_function("Suspend") end },
 }
-
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
                                     { "Debian", debianMenu.Debian_menu.Debian },

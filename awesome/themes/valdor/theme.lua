@@ -1,5 +1,6 @@
 --[[
                                              
+     Valdor Awesome custom theme, derived from
      Powerarrow Darker Awesome WM config 2.0 
      github.com/copycat-killer               
                                              
@@ -57,6 +58,9 @@ theme.layout_floating               = themes_dir .. "/icons/floating.png"
 theme.arrl                          = themes_dir .. "/icons/arrl.png"
 theme.arrl_dl                       = themes_dir .. "/icons/arrl_dl.png"
 theme.arrl_ld                       = themes_dir .. "/icons/arrl_ld.png"
+
+theme.widget_color_battery          = "#cc3333"
+theme.widget_color_sound            = "#3939e5"
 
 theme.widget_ac                     = themes_dir .. "/icons/ac.png"
 theme.widget_battery                = themes_dir .. "/icons/battery.png"
