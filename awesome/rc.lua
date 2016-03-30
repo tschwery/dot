@@ -437,7 +437,7 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
-lain.widgets.calendar:attach(mytextclock, { cal = "/usr/bin/cal -h" })
+lain.widgets.calendar:attach(mytextclock, { cal = "/usr/bin/cal" })
 
 -- Separator
 spr = wibox.widget.textbox('|')
