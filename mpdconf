@@ -1,6 +1,6 @@
 # General directory options ###################################################
 
-music_directory		"~/./Music/"
+music_directory		"~/Music/"
 playlist_directory	"~/.mpd/playlists"
 db_file			"~/.mpd/tag_cache"
 log_file		"~/.mpd/mpd.log"
