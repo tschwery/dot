@@ -9,9 +9,11 @@
 # don't overwrite GNU Midnight Commander's setting of `ignorespace'.
 export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
 # ... or force ignoredups and ignorespace
-export HISTCONTROL=ignoreboth
+export HISTCONTROL="erasedups:ignoreboth"
+export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 
-export HISTSIZE=5000
+HISTSIZE=500000
+HISTFILESIZE=100000
 
 # append to the history file, don't overwrite it
 shopt -s histappend
