@@ -348,6 +348,14 @@ function power_function (action, menu)
             sleep_timer:stop()
         end)
         sleep_timer:start()
+    elseif (action == "Hibernate") then
+        screen_lock()
+        local sleep_timer = timer { timeout = 2 }
+        sleep_timer:connect_signal("timeout", function()
+            io.popen('systemctl hibernate')
+            sleep_timer:stop()
+        end)
+        sleep_timer:start()
     else
          naughty.notify({ title = "Unknown error", text = "Unknown action " .. action .. "."})
     end
@@ -421,6 +429,7 @@ myawesomemenu = {
 
 mypowermenu = {
     { "Suspend",  function() power_function("Suspend") end },
+    { "Hibernate",  function() power_function("Hibernate") end }
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
