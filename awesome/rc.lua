@@ -661,7 +661,7 @@ globalkeys = awful.util.table.join(
             os.execute("sleep 1")
             naughty.notify({ title = "Window screenshot taken", timeout = 2 })
         end, "Screenshot Selection"),
-    awful.key({modkey   }, "F12",                   function() screen_lock() end,     "Lock Screen"),
+    awful.key({ modkey  }, "F12",                   function() screen_lock() end,     "Lock Screen"),
     awful.key({ modkey  }, "F1",                    keydoc.display,                   "Display help"),
     awful.key({         }, "XF86MonBrightnessUp",   function() backlight("inc") end,  "Increase brightness"),
     awful.key({         }, "XF86MonBrightnessDown", function() backlight("dec") end , "Decrease brightness"),
@@ -739,8 +739,6 @@ awful.rules.rules = {
                      maximized_horizontal = false,
                      size_hints_honor = false,
                      buttons = clientbuttons } },
-    { rule = { class = "Conky" },
-      properties = { floating = true, sticky = true } },
     { rule = { instance = "Navigator" },
       properties = { tag = tags[1][1] } },
     { rule = { instance = "Mail" },
