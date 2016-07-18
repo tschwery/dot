@@ -412,10 +412,10 @@ wp_timer = timer { timeout = wp_timeout }
 wp_timer:connect_signal("timeout", wp_load)
 wp_timer:start()
 
+math.randomseed( os.time() )
+
 wp_init()
 wp_load()
-
-math.randomseed( os.time() )
 -- }}}
 
 -- {{{ Menu
