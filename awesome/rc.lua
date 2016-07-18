@@ -671,7 +671,8 @@ globalkeys = awful.util.table.join(
 
 clientkeys = awful.util.table.join(
     keydoc.group("Client manipulation"),
-    awful.key({ modkey,           }, "f",      function (c) c.fullscreen = not c.fullscreen  end, "Switch fullscreen"),
+    awful.key({ modkey,           }, "f",      function (c) c.maximized = not c.maximized    end, "Switch maximized"),
+    awful.key({ modkey, "Shift"   }, "f",      function (c) c.fullscreen = not c.fullscreen  end, "Switch fullscreen"),
     awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end, "Close window"),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     , "Toggle floating mode"),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end, "Move selected window to main position"),
