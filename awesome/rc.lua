@@ -318,7 +318,7 @@ function backlight (action)
 end
 
 -- Lock mechanism
-function screen_lock ( )
+function screen_lock ( blackout )
     local lock_folder=os.getenv("HOME") .. "/Divers/Lockscreens/"
     local auth = "-auth pam"
     local locks_iterator = io.popen('ls "' .. lock_folder .. '"'):lines()
@@ -329,31 +329,46 @@ function screen_lock ( )
     local lock_number = math.random(1,#locks)
     local back = "-bg image:scale,file='" .. lock_folder .. locks[lock_number] .. "'"
     local curs = ""
+
+    if (blackout == nil) then
+        blackout = 5
+    end
+
     local lock_timer = timer { timeout = 1 }
+    local soff_timer = timer { timeout = blackout }
+
     lock_timer:connect_signal("timeout", function()
         awful.util.spawn_with_shell(os.getenv("HOME") .. "/.local/bin/alock" .. " " .. auth .. " " .. back .. " " .. curs)
         lock_timer:stop()
     end)
+    soff_timer:connect_signal("timeout", function()
+        awful.util.spawn_with_shell("/usr/bin/xset dpms force off")
+        soff_timer:stop()
+    end)
+
     lock_timer:start()
+    if ( blackout > 0 ) then
+        soff_timer:start()
+    end
 end
 
 -- Sleep, shutdown and reboot actions
 function power_function (action, menu)
     naughty.notify({ title = "Menu", text = menu, timeout = 2 })
     if (action == "Suspend") then
-        screen_lock()
+        screen_lock(-1)
         local sleep_timer = timer { timeout = 2 }
         sleep_timer:connect_signal("timeout", function()
-            io.popen('systemctl suspend')
             sleep_timer:stop()
+            io.popen('systemctl suspend')
         end)
         sleep_timer:start()
     elseif (action == "Hibernate") then
-        screen_lock()
+        screen_lock(-1)
         local sleep_timer = timer { timeout = 2 }
         sleep_timer:connect_signal("timeout", function()
-            io.popen('systemctl hibernate')
             sleep_timer:stop()
+            io.popen('systemctl hibernate')
         end)
         sleep_timer:start()
     else
