@@ -149,6 +149,47 @@ for battery in power_supply_list do
 end
 -- }}}
 
+
+-- {{{ Coretemp
+function thermal_information(twidget, thermal_zone)
+    local fcur = io.open(thermal_zone.."/temp")
+    local cur = fcur:read()
+
+    local coretemp_now = tonumber(cur) / 1000
+
+    twidget:set_text(math.floor(coretemp_now) .. "°C")
+end
+
+tempicon = wibox.widget.imagebox(beautiful.widget_temp)
+temp_widgets = {}
+
+local thermal_zone_prefix = "/sys/class/thermal/"
+local thermal_zone_list = io.popen('ls ' .. thermal_zone_prefix .. '*/temp'):lines()
+
+for thermal_sensor in thermal_zone_list do
+    local f = io.open(thermal_sensor)
+    -- We filter out thermal zones that error out
+    local t = f:read("*all")
+    if tonumber(t) ~= nil then
+        local temp_widget = wibox.widget.textbox()
+        temp_widget:set_align("right")
+
+        local p_length = string.len(thermal_zone_prefix) + 1
+        local s_length = string.find(thermal_sensor, '/', p_length)
+        local thermal_zone = string.sub(thermal_sensor, 1, s_length)
+
+        local temperature_timer = timer({timeout = 20})
+        temperature_timer:connect_signal("timeout", function()
+            thermal_information(temp_widget, thermal_zone)
+        end)
+        temperature_timer:start()
+        thermal_information(temp_widget, thermal_zone)
+
+        temp_widgets[#temp_widgets + 1] = temp_widget
+    end
+end
+-- }}}
+
 -- {{{ Sound widget
 local paCmd = "pacmd"
 local paMixer = "pavucontrol"
@@ -465,15 +506,6 @@ lain.widgets.calendar:attach(mytextclock, { cal = "/usr/bin/cal" })
 -- Separator
 spr = wibox.widget.textbox('|')
 
--- Coretemp
-tempicon = wibox.widget.imagebox(beautiful.widget_temp)
-tempwidget = lain.widgets.temp({
-    settings = function()
-        widget:set_text(" " .. coretemp_now .. "°C ")
-    end
-}, "#313131")
-
-
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -548,8 +580,10 @@ for s = 1, screen.count() do
         right_layout:add(spr)
     end
     right_layout:add(tempicon)
-    right_layout:add(tempwidget)
-    right_layout:add(spr)
+    for i,temp_widget in ipairs(temp_widgets) do
+        right_layout:add(temp_widget)
+        right_layout:add(spr)
+    end
     right_layout:add(mytextclock)
     right_layout:add(spr)
     right_layout:add(mylayoutbox[s])
