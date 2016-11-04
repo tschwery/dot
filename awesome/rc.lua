@@ -235,12 +235,15 @@ function soundInfo(swidget)
     local paVolume = paCurrentVolume(fout)
 
     local indicator = ""
-    local sound_ten = math.ceil(paVolume * 10)
-    for f = 1,sound_ten do
-        indicator = indicator .. "<span foreground='" .. beautiful.widget_color_sound .. "'>🔉</span>"
-    end
-    for f = sound_ten,9 do
-        indicator = indicator .. "🔊"
+
+    if paVolume >= 0 then
+        local sound_ten = math.ceil(paVolume * 10)
+        for f = 1,sound_ten do
+            indicator = indicator .. "<span foreground='" .. beautiful.widget_color_sound .. "'>🔉</span>"
+        end
+        for f = sound_ten,9 do
+            indicator = indicator .. "🔊"
+        end
     end
 
     swidget:set_markup(indicator)
