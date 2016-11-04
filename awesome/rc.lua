@@ -77,9 +77,9 @@ layouts =
 
 -- {{{ Battery widget
 function batteryInfo(bwidget, adapter, popup)
-    local fcur = io.open("/sys/class/power_supply/"..adapter.."/energy_now")
-    local fcap = io.open("/sys/class/power_supply/"..adapter.."/energy_full")
-    local fsta = io.open("/sys/class/power_supply/"..adapter.."/status")
+    local fcur = io.open(adapter.."/energy_now")
+    local fcap = io.open(adapter.."/energy_full")
+    local fsta = io.open(adapter.."/status")
 
     local cur = fcur:read()
     local cap = fcap:read()
@@ -128,25 +128,24 @@ function batteryInfo(bwidget, adapter, popup)
 end
 
 batt_widgets = {}
-for i = 0,9 do
+local power_supply_prefix = "/sys/class/power_supply/"
+local power_supply_list = io.popen('ls ' .. power_supply_prefix .. '*/energy_now'):lines()
+for battery in power_supply_list do
     local battery_widget = wibox.widget.textbox()
     battery_widget:set_align("right")
 
-    local adapter = "BAT" .. i
-    local test_file = "/sys/class/power_supply/" .. adapter .. "/"
+    local p_length = string.len(power_supply_prefix) + 1
+    local s_length = string.find(battery, '/', p_length)
+    local adapter = string.sub(battery, 1, s_length)
 
-    local test_f = io.open(test_file)
+    local battery_timer = timer({timeout = 20})
+    battery_timer:connect_signal("timeout", function()
+        batteryInfo(battery_widget, adapter, #batt_widgets == 0)
+    end)
+    battery_timer:start()
+    batteryInfo(battery_widget, adapter, true)
 
-    if (test_f ~= nil) then
-        local battery_timer = timer({timeout = 20})
-        battery_timer:connect_signal("timeout", function()
-            batteryInfo(battery_widget, "BAT" .. i, i == 1)
-        end)
-        battery_timer:start()
-        batteryInfo(battery_widget, "BAT" .. i, true)
-
-        batt_widgets[i + 1] = battery_widget
-    end
+    batt_widgets[#batt_widgets + 1] = battery_widget
 end
 -- }}}
 
