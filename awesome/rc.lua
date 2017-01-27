@@ -599,7 +599,11 @@ globalkeys = awful.util.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
+    awful.key({ modkey,           }, "w",   function ()
+                                                for s in screen do
+                                                    set_wallpaper(s)()
+                                                end
+                                            end,
               {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
