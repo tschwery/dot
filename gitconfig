@@ -10,8 +10,8 @@
 [alias]
 	type = cat-file -t
 	dump = cat-file -p
-	hist = log --graph --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
-	glog = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+	glog = log --graph --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
+	slog = log --no-merges --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
 	largest = "!git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | awk '/^blob/ {print substr($0,6)}' | sort --numeric-sort --key=2 | cut --complement --characters=8-40 | numfmt --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest"
 	whatadded = log --diff-filter=A --
 [core]
