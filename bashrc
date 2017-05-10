@@ -34,6 +34,12 @@ CYAN='\[\033[01;36m\]'
 WHITE='\[\033[01;37m\]'
 NIL='\[\033[00m\]'
 
+if [ -e /usr/lib/git-core/git-sh-prompt ]; then
+    . /usr/lib/git-core/git-sh-prompt
+    GIT_PS1_SHOWDIRTYSTATE=1
+    GIT_PS1_SHOWUPSTREAM="auto"
+fi
+
 set_prompt() {
     reta=$?
     if [ $reta -ne 0 ]; then ret="${RED}($reta)"; else ret=""; fi
@@ -50,9 +56,13 @@ set_prompt() {
 
     end="${CYAN} $ ${NIL}"
 
-    PS1="${command}${ret}${GREEN}@${host}:${path}${end}"
+    if [ -e /usr/lib/git-core/git-sh-prompt ]; then
+        git=$(__git_ps1 " (%s)")
+    fi
 
-    title="${HOSTNAME}: ${PWD} ($reta)"
+    PS1="${command}${ret}${GREEN}@${host}:${path}${YELLOW}${git}${end}"
+
+    title="${HOSTNAME}: ${PWD} ${git} ($reta)"
     printf "\e]2;%s\a" "$title"
 }
 
