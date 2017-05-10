@@ -13,6 +13,7 @@
 	glog = log --graph --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
 	slog = log --no-merges --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
 	largest = "!git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | awk '/^blob/ {print substr($0,6)}' | sort --numeric-sort --key=2 | cut --complement --characters=8-40 | numfmt --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest"
+	remoteprune = "!git branch --merged master | grep -v '^* master$' | xargs git branch -d"
 	whatadded = log --diff-filter=A --
 [core]
 	quotepath = false
