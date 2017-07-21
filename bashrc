@@ -52,18 +52,19 @@ set_prompt() {
     user="${ucolor}\u"
     host="${ucolor}\h"
 
-    path="${BLUE}\w"
+    SPWD=$(p="${PWD#${HOME}}"; [ "${PWD}" != "${p}" ] && printf -- "~";IFS=/; for q in ${p:1}; do printf -- /${q:0:3}; done; printf -- "${q:3}")
+
+    path="${BLUE}${SPWD}"
 
     end="${CYAN} $ ${NIL}"
 
     if [ -e /usr/lib/git-core/git-sh-prompt ]; then
         git=$(__git_ps1 " (%s)")
     fi
-
     PS1="${command}${ret}${GREEN}@${host}:${path}${YELLOW}${git}${end}"
 
-    title="${HOSTNAME}: ${PWD} ${git} ($reta)"
-    printf "\e]2;%s\a" "$title"
+    title="${HOSTNAME}: ${SPWD} ${git} ($reta)"
+    printf -- "\e]2;%s\a" "$title"
 }
 
 PROMPT_COMMAND=set_prompt
