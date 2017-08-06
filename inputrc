@@ -38,6 +38,12 @@ set completion-ignore-case on
 # Autocompletion will show only what still need to be typed
 set completion-prefix-display-length 2
 
+# Display completions using different colors to indicate their file types
+set colored-stats on
+
+# Append characters that indicate the suggestions file types
+set visible-stats on
+
 # Ctrl-j/k to cycle through the available completions
 Control-j: menu-complete
 Control-k: menu-complete-backward
