@@ -11,6 +11,9 @@ theme                               = {}
 themes_dir                          = os.getenv("HOME") .. "/.config/awesome/themes/valdor"
 theme.wallpaper                     = os.getenv("HOME") .. "/Pictures/Wallpapers/rore_-_Debian_Moonlight.png"
 
+theme.wall_dir                      = os.getenv("HOME") .. "/Divers/Wallpapers"
+theme.lock_dir                      = os.getenv("HOME") .. "/Divers/Lockscreens"
+
 theme.font                          = "Inconsolata 8"
 theme.fg_normal                     = "#AAAAAA"
 theme.fg_focus                      = "#F0F0F0"

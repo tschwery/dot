@@ -325,7 +325,11 @@ end
 
 -- Lock mechanism
 function screen_lock ( blackout )
-    local lock_folder=os.getenv("HOME") .. "/Divers/Lockscreens/"
+    local lock_folder = beautiful.wall_dir
+    if screen.count() == 2 then
+        lock_folder = beautiful.lock_dir
+    end
+
     local auth = "-auth pam"
     local locks_iterator = io.popen('ls "' .. lock_folder .. '"'):lines()
     local locks = {}
@@ -333,7 +337,7 @@ function screen_lock ( blackout )
         locks[#locks + 1] = v
     end
     local lock_number = math.random(1,#locks)
-    local back = "-bg image:scale,file='" .. lock_folder .. locks[lock_number] .. "'"
+    local back = "-bg image:scale,file='" .. lock_folder .. "/" .. locks[lock_number] .. "'"
     local curs = ""
 
     if (blackout == nil) then
@@ -386,9 +390,8 @@ end
 
 -- {{{ Wallpaper
 local wp_timeout = 600
-local wp_path = os.getenv("HOME") .. "/Divers/Wallpapers/"
 local wp_init = function ()
-    local walls_iterator = io.popen('ls "' .. wp_path .. '"'):lines()
+    local walls_iterator = io.popen('ls "' .. beautiful.wall_dir .. '"'):lines()
     walls = {}
     for v in walls_iterator do
         walls[#walls + 1] = v
@@ -401,7 +404,7 @@ wp_init()
 
 beautiful.wallpaper = function(s)
     local wall_number = math.random(1,#walls)
-    local back =  wp_path .. walls[wall_number]
+    local back =  beautiful.wall_dir .. "/" .. walls[wall_number]
     return back
 end
 -- }}}
@@ -768,6 +771,37 @@ for i = 1, 10 do
                   {description = "toggle focused client on tag #" .. i, group = "tag"})
     )
 end
+
+-- Some debugging tools for screen manipulation
+globalkeys = awful.util.table.join(globalkeys,
+    awful.key({ modkey, "Shift", "Control"   }, "s",
+        function (c)
+            local geo = screen[1].geometry
+            local new_width = math.ceil(geo.width/2)
+            local new_width2 = geo.width - new_width
+            screen[1]:fake_resize(geo.x, geo.y, new_width, geo.height)
+            local new_fake_screen = screen.fake_add(geo.x + new_width, geo.y, new_width2, geo.height)
+            new_fake_screen.fake = true
+        end),
+    awful.key({ modkey, "Shift", "Control"   }, "a",
+        function()
+            if screen[screen.count()].fake then
+                local geo1 = screen[1].geometry
+                local geo2 = screen[screen.count()].geometry
+                local new_width = geo1.width + geo2.width
+                screen[1]:fake_resize(geo1.x, geo1.y, new_width, geo1.height)
+                screen[1].fake_remove(screen[screen.count()])
+            end
+        end)
+)
+
+screen.connect_signal("list", function(c)
+    naughty.notify({
+        title = "Screens changed",
+        text = "Screens changed. There are " .. screen.count() .. " screens now." })
+
+    set_wallpaper(s)()
+end)
 
 clientbuttons = awful.util.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
