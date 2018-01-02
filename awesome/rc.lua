@@ -114,7 +114,7 @@ function batteryInfo(bwidget, adapter, popup)
                            })
         end
     else
-        dir = "="
+        dir = "🔌"
     end
     local indicator = ""
     local battery_ten = math.floor(battery / 10)
@@ -122,7 +122,7 @@ function batteryInfo(bwidget, adapter, popup)
         indicator = indicator .. "<span foreground='" .. ( beautiful.widget_color_battery or '#cc3333' ).. "'>♥</span>"
     end
     for f = battery_ten,9 do
-        indicator = indicator .. "♡"
+        indicator = indicator .. "<span foreground='" .. ( beautiful.widget_color_empty or beautiful.border_focus ).. "'>♥</span>"
     end
 
     bwidget:set_markup(dir .. indicator)
@@ -160,7 +160,7 @@ function thermal_information(twidget, thermal_zone)
     twidget:set_text(math.floor(coretemp_now) .. "°C")
 end
 
-tempicon = wibox.widget.imagebox(beautiful.widget_temp)
+tempicon = wibox.widget.textbox("🌡") -- thermometer icon
 temp_widgets = {}
 
 local thermal_zone_prefix = "/sys/class/thermal/"
@@ -243,7 +243,7 @@ function pulse_volume_widget(swidget)
             indicator = indicator .. "<span foreground='" .. ( beautiful.widget_color_sound or '#3939e5' ) .. "'>🔉</span>"
         end
         for f = sound_ten,9 do
-            indicator = indicator .. "🔊"
+            indicator = indicator .. "<span foreground='" .. ( beautiful.widget_color_empty or beautiful.border_focus ) .. "'>🔉</span>"
         end
     end
 
