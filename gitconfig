@@ -18,6 +18,7 @@
 	branch-name = "!git rev-parse --abbrev-ref HEAD"
 	publish = "!git push -u origin $(git branch-name)"
 	mrdiff = "!git diff master..$(git branch-name)"
+	commit-oups = commit --amend --no-edit
 [core]
 	quotepath = false
 [filter "lfs"]
