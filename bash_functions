@@ -29,7 +29,7 @@ function gen_password {
 function gen-monkey-pass {
     [[ $(echo "$1"|grep -E '[0-9]+') ]] && NUM="$1" || NUM=1
     for I in $(seq 1 "$NUM"); do
-        LC_CTYPE=C strings /dev/urandom|grep -o '[a-hjkmnp-z2-9-]'|head -n 16|paste -sd '' -
+        LC_CTYPE=C strings /dev/urandom|grep -o '[a-hjkmnp-zA-HJKMNP-Z2-9-]'|head -n 16|paste -sd '' -
     done | column
 }
 
