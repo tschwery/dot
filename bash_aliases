@@ -21,6 +21,8 @@ alias nip='curl icanhazip.com'
 alias cdiff='diff -wBy -W $COLUMNS'
 
 alias issh='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null"'
+alias iscp='scp -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null"'
+alias isftp='sftp -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null"'
 alias ichrome='chromium --disable-web-security --ignore-certificate-errors'
 
 alias valgrind_memory='valgrind --leak-check=full --show-reachable=yes'
