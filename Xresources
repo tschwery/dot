@@ -27,4 +27,7 @@ URxvt.iso14755:          false
 URxvt.iso14755_52:       false
 URxvt.cursorUnderline:   true
 
+Xcursor.size:            24
+Xft.dpi:                 86
+
 #include ".Xcolors"
