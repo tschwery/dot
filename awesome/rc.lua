@@ -114,7 +114,7 @@ function batteryInfo(bwidget, adapter, popup)
                            })
         end
     else
-        dir = "🔌"
+        dir = "="
     end
     local indicator = ""
     local battery_ten = math.floor(battery / 10)
@@ -160,7 +160,6 @@ function thermal_information(twidget, thermal_zone)
     twidget:set_text(math.floor(coretemp_now) .. "°C")
 end
 
-tempicon = wibox.widget.textbox("🌡") -- thermometer icon
 temp_widgets = {}
 
 local thermal_zone_prefix = "/sys/class/thermal/"
@@ -537,14 +536,13 @@ awful.screen.connect_for_each_screen(function(s)
     
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(wibox.widget.systray())
     right_layout:add(sound_widget)
     right_layout:add(spr)
     for i,batt_widget in ipairs(batt_widgets) do
         right_layout:add(batt_widget)
         right_layout:add(spr)
     end
-    right_layout:add(tempicon)
     for i,temp_widget in ipairs(temp_widgets) do
         right_layout:add(temp_widget)
         right_layout:add(spr)
