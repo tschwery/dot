@@ -9,3 +9,10 @@ xdg-user-dirs-update
 
 # Setting the screen dpi
 xrandr --dpi 70
+
+# Restoring the screen layouts if any is available
+if [ -d "$HOME/.screenlayouts" ]; then
+    for file in "$HOME/.screenlayouts/"*; do
+        sh "$file"
+    done
+fi
