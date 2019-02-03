@@ -15,6 +15,10 @@ export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
 HISTSIZE=500000
 HISTFILESIZE=100000
 
+if [ -f ~/.bash_xdgconfig ]; then
+    . ~/.bash_xdgconfig
+fi
+
 # append to the history file, don't overwrite it
 shopt -s histappend
 
@@ -103,3 +107,4 @@ export PATH
 if [ -f ~/.bash_local ]; then
     . ~/.bash_local
 fi
+
