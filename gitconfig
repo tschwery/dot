@@ -1,12 +1,11 @@
+[include]
+        path = .gitconfig-user
 [push]
 	default = simple
 [pull]
 	rebase = true
 [fetch]
 	prune = true
-[user]
-	name = Thomas Schwery
-	email = thomas@inf3.ch
 [alias]
 	type = cat-file -t
 	dump = cat-file -p
