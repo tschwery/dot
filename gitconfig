@@ -60,6 +60,10 @@
 	# Shows the file differences between the current branch and the master branch.
 	fldiff = "diff master...HEAD --name-status"
 
+	# Shows the commits that generate a diff containing the given text.
+	# This can be used to look for commits that introduced a block of code, a class, ...
+	codiff = "!codiff() { git log --stat --decorate --date=short -S\"$1\"; }; codiff"
+
 	# Shorthand to amend the last commit without changing the commit message.
 	commit-oups = commit --amend --no-edit
 
