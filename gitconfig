@@ -57,6 +57,9 @@
 	# Shows the differences between the current branch and the master branch.
 	mrdiff = "!git diff master..$(git branch-name)"
 
+	# Shows the file differences between the current branch and the master branch.
+	fldiff = "diff master...HEAD --name-status"
+
 	# Shorthand to amend the last commit without changing the commit message.
 	commit-oups = commit --amend --no-edit
 
