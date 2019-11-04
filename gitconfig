@@ -1,26 +1,74 @@
 [include]
-        path = .gitconfig-user
+	# To allow reuse of the same configuration file on multiple computer
+	# with different identities (work and personal), we extract the
+	# identity configuration into an another file.
+	path = .gitconfig-user
+
 [push]
+	# Push only the current branch on a push operation, only if the remote
+	# has the same name as the local current branch.
 	default = simple
+
 [pull]
+	# When pulling a remote branch, rebase the local commits on top of the
+	# remote commits instead of doing a merge operation from the remote with
+	# the local branch. Warning: Pulling from a branch that was rebased
+	# (e.g. on a newer master) will usually duplicate the commits.
 	rebase = true
+
 [fetch]
+	# Prune the remote branches that disappeared on fetch from the origins.
 	prune = true
+
 [alias]
-	type = cat-file -t
-	dump = cat-file -p
+	# Shorthand to print a graph log with oneliner commit messages.
 	glog = log --graph --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
+
+	# Shorthand to print a log with onliner commit messages ignoring merge
+	# commits.
 	slog = log --no-merges --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
+
+	# Prints today's commits, including merge commits, in every branch.
+	today = log --since "00:00:00" --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
+
+	# (Slow) Finds the largest objects in the git history. This alias
+	# can be used during the migration to git to find the largest files
+	# even if they were deleted. If there are multiple versions of one
+	# file, each version is printed out with its corresponding size.
 	largest = "!git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | awk '/^blob/ {print substr($0,6)}' | sort --numeric-sort --key=2 | cut --complement --characters=8-40 | numfmt --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest"
+
+	# Delete local branches that have been deleted on the server.
 	remoteprune = "!git branch -vvv | grep ': gone]' | awk '{ print $1 }' | xargs git branch -D"
+
+	# Find the commit that created the given file.
 	whatadded = log --diff-filter=A --
+
+	# Prints out the current branch. This alias is used for other aliases.
 	branch-name = "!git rev-parse --abbrev-ref HEAD"
+
+	# Shorthand to facilitate the remote creation of new branches. This allow
+	# the user to push a new branch on the origin easily.
 	publish = "!git push -u origin $(git branch-name)"
+
+	# Shorthand to faciliate the creation of new branches. This switch to
+	# the given branch, creating it if necessary.
+	go = "!go() { git checkout -b $1 2> /dev/null|| git checkout $1; }; go"
+
+	# Shows the differences between the current branch and the master branch.
 	mrdiff = "!git diff master..$(git branch-name)"
+
+	# Shorthand to amend the last commit without changing the commit message.
 	commit-oups = commit --amend --no-edit
+
+	# Reset the file permissions on the local files to match what they
+	# should be according to the VC.
 	permission-reset = !git diff -p -R --no-color | grep -E \"^(diff|(old|new) mode)\" --color=never | git apply
+
 [core]
+	# Don't quote 'unusual' bytes in the pathname on commands that outputs
+	# paths.
 	quotepath = false
+
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
