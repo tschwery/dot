@@ -855,8 +855,6 @@ awful.rules.rules = {
       }, properties = { floating = true }},
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
-       { rule = { instance = "Navigator" },
-         properties = { screen = 1, tag = "1" } },
        { rule = { instance = "Mail" },
          properties = { screen = 1, tag = "2" } },
 }
