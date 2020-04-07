@@ -79,6 +79,9 @@
 	# paths.
 	quotepath = false
 
+	# Use vim for commit messages edits
+	editor = vim
+
 [filter "lfs"]
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
