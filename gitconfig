@@ -4,6 +4,9 @@
 	# identity configuration into an another file.
 	path = .gitconfig-user
 
+[includeIf "gitdir:~/workspace/boulot/**"]
+	path = .gitconfig-user-boulot
+
 [push]
 	# Push only the current branch on a push operation, only if the remote
 	# has the same name as the local current branch.
