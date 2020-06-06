@@ -7,6 +7,9 @@
 [includeIf "gitdir:~/workspace/boulot/**"]
 	path = .gitconfig-user-boulot
 
+[includeIf "gitdir:~/workspace/work/**"]
+	path = .gitconfig-user-boulot
+
 [push]
 	# Push only the current branch on a push operation, only if the remote
 	# has the same name as the local current branch.
@@ -32,36 +35,36 @@
 	slog = log --no-merges --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
 
 	# Prints today's commits, including merge commits, in every branch.
-	today = log --since "00:00:00" --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
+	today = log --since 00:00:00 --pretty=format:'%C(yellow)[%ad]%C(reset) %C(green)[%h]%C(reset) %s %C(red)[%an]%C(blue)%d%C(reset)' --date=short
 
 	# (Slow) Finds the largest objects in the git history. This alias
 	# can be used during the migration to git to find the largest files
 	# even if they were deleted. If there are multiple versions of one
 	# file, each version is printed out with its corresponding size.
-	largest = "!git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | awk '/^blob/ {print substr($0,6)}' | sort --numeric-sort --key=2 | cut --complement --characters=8-40 | numfmt --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest"
+	largest = !git rev-list --objects --all | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | awk '/^blob/ {print substr($0,6)}' | sort --numeric-sort --key=2 | cut --complement --characters=8-40 | numfmt --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest
 
 	# Delete local branches that have been deleted on the server.
-	remoteprune = "!git branch -vvv | grep ': gone]' | awk '{ print $1 }' | xargs git branch -D"
+	remoteprune = !git branch -vvv | grep ': gone]' | awk '{ print $1 }' | xargs git branch -D
 
 	# Find the commit that created the given file.
 	whatadded = log --diff-filter=A --
 
 	# Prints out the current branch. This alias is used for other aliases.
-	branch-name = "!git rev-parse --abbrev-ref HEAD"
+	branch-name = !git rev-parse --abbrev-ref HEAD
 
 	# Shorthand to facilitate the remote creation of new branches. This allow
 	# the user to push a new branch on the origin easily.
-	publish = "!git push -u origin $(git branch-name)"
+	publish = !git push -u origin $(git branch-name)
 
 	# Shorthand to faciliate the creation of new branches. This switch to
 	# the given branch, creating it if necessary.
 	go = "!go() { git checkout -b $1 2> /dev/null|| git checkout $1; }; go"
 
 	# Shows the differences between the current branch and the master branch.
-	mrdiff = "!git diff master..$(git branch-name)"
+	mrdiff = !git diff master..$(git branch-name)
 
 	# Shows the file differences between the current branch and the master branch.
-	fldiff = "diff master...HEAD --name-status"
+	fldiff = diff master...HEAD --name-status
 
 	# Shows the commits that generate a diff containing the given text.
 	# This can be used to look for commits that introduced a block of code, a class, ...
@@ -87,3 +90,6 @@
 	process = git-lfs filter-process
 	required = true
 	clean = git-lfs clean -- %f
+[filesystem "Debian|11.0.7-ea|/dev/mapper/_dev_dm_2"]
+	timestampResolution = 10000 nanoseconds
+	minRacyThreshold = 4310 microseconds
