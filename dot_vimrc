@@ -1,0 +1,26 @@
+set history=500
+
+syntax on
+
+set autoread
+au FocusGained,BufEnter * checktime
+
+set ruler
+
+set number
+set relativenumber
+
+set cmdheight=1
+set hlsearch
+set magic
+set incsearch
+set encoding=utf8
+
+set smarttab
+set ai
+set si
+
+set nobackup
+
+set laststatus=2
+set statusline=\ %F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
