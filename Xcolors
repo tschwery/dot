@@ -12,11 +12,11 @@
 *.color9:       #ad7f79
 
 ! green
-*.color2:       #468459
+*.color2:       #548c65
 *.color10:      #74a481
 
 ! yellow
-*.color3:       #84763d
+*.color3:       #94874f
 *.color11:      #b2a473
 
 ! blue
